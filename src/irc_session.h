@@ -2,7 +2,6 @@
 #include"irc_error.h"
 #include"irc_response.h"
 #include"irc_request.h"
-#include"irc_user.h"
 
 namespace irc {
     enum USER_STATE {
@@ -13,6 +12,6 @@ namespace irc {
     class UserSession {
     public:
         USER_STATE state;
-        std::string chat_name;
+        std::string chatName;
     };
 }
