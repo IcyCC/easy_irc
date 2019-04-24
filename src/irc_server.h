@@ -14,7 +14,7 @@ namespace irc {
         std::map<std::string, irc::User> UserMap;    
     public:
         irc::User ReadUser(std::string name);
-        irc::User ReadChannel(std::string name); 
+        irc::User ReadChannel(std::string name);
     public:
         void RunServe(int port); // 运行服务
         static Server* GetInstance();
