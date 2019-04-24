@@ -48,17 +48,6 @@ op
 args
 ```
 
- 
-### 客户端消息 IRCMessage
-属性
-```
-raw
-```
-方法
-
-```
-ToString
-```
 
 ### 服务器响应 IRCResponse
 
