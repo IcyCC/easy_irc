@@ -8,7 +8,7 @@
 namespace irc {
     class Server {
     private:
-        static Server * _server = nullptr;
+        static Server * _server;
     public:
         std::map<std::string, irc::Channel> ChannelMap;
         std::map<std::string, irc::User> UserMap;    
