@@ -1,3 +1,5 @@
+#pragma once
+
 #include<string>
 #include"irc_error.h"
 #include"irc_response.h"
