@@ -1,6 +1,6 @@
 # tool marcros
 CC := g++
-CCFLAG := -std=c++14 -lpthread  -Wall -MMD -MP -Iext/fmt-5.2.1/include
+CCFLAG := -std=c++14 -lpthread  -Wall -MMD -MP
 DBGFLAG := -g
 CCOBJFLAG := $(CCFLAG) -c
 

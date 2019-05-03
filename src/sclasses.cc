@@ -1,8 +1,6 @@
 #include "sclasses.hh"
 #include <assert.h>
 #include <sys/poll.h>
-#include <fmt/format.h>
-#include <fmt/printf.h>
 
 int waitForRWData(int fd, bool waitForRead, double* timeout, bool* error, bool* disconnected)
 {
@@ -53,26 +51,26 @@ int SConnectWithTimeout(int sockfd, const ComboAddress& remote, double timeout=-
           savederrno = 0;
           socklen_t errlen = sizeof(savederrno);
           if (getsockopt(sockfd, SOL_SOCKET, SO_ERROR, (void *)&savederrno, &errlen) == 0) {
-            throw std::runtime_error(fmt::sprintf("connecting to %s failed: %s", remote.toStringWithPort(), strerror(savederrno)));
+            throw std::runtime_error("SOCKET ERROR 1");
           }
           else {
-            throw std::runtime_error(fmt::sprintf("connecting to %s failed", remote.toStringWithPort()));
+            throw std::runtime_error("SOCKET ERROR 1");
           }
         }
         if (disconnected) {
-          throw std::runtime_error(fmt::sprintf("%s closed the connection", remote.toStringWithPort()));;
+          throw std::runtime_error("SOCKET ERROR 1");;
         }
         return 0;
       }
       else if (res == 0) {
-        throw std::runtime_error(fmt::sprintf("timeout while connecting to %s", remote.toStringWithPort()));
+        throw std::runtime_error("SOCKET ERROR 1");
       } else if (res < 0) {
         savederrno = errno;
-        throw std::runtime_error(fmt::sprintf("waiting to connect to %s: %s", remote.toStringWithPort(), strerror(savederrno)));
+        throw std::runtime_error("SOCKET ERROR 1");
       }
     }
     else {
-      throw std::runtime_error(fmt::sprintf("connecting to %s: %s", remote.toStringWithPort(), strerror(savederrno)));
+      throw std::runtime_error("SOCKET ERROR 1");
     }
   }
 
