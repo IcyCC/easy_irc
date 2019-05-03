@@ -2,6 +2,5 @@
 #include"irc_server.h"
 
 int main (){
-    auto server = irc::Server::GetInstance();
-    server->RunServe(8080);
+
 }
