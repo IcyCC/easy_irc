@@ -11,6 +11,9 @@ namespace irc {
     private:
         static Server * _server;
     public:
+        std::string host;
+        std::string port;
+    public:
         std::map<std::string, irc::Channel> ChannelMap;
         std::map<std::string, irc::User> UserMap;    
     public:

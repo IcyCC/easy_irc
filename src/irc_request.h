@@ -4,7 +4,19 @@
 
 namespace irc {
     enum IRC_REQUEST_OP {
-        
+        NICK,
+        USER,
+        QUIT,
+        PRIVMSG, 
+        NOTICE,
+        PING,
+        PONG,
+        MOTD,
+        LUSERS,
+        WHOIS,
+        JOIN,
+        PART,
+        UNKNOW
     };
     class IRCRequest {
 
@@ -15,7 +27,6 @@ namespace irc {
     public:
          
         IRCRequest(std::string& _raw);
-
         std::string ToString(); //转成字符串
 
     };
