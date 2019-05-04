@@ -6,14 +6,9 @@
 
 std::mutex g_lock;
 
-void test_Request (){
-    std::string t = "NICK username\r\n";
-    auto r = irc::IRCRequest(t);
-    std::cout<<r.cmds[0]<<std::endl;
-};
 
 int main (){
-    test_Request();
-    std::cout<<irc::RESP_CODE::ERR_NICKNAMEINUSE;
+    auto server = irc::Server::Server::GetInstance();
+    server->RunServe();
     return 0;
 }
