@@ -24,12 +24,27 @@ void irc::business::Login(irc::User &user){
     auto server = irc::Server::GetInstance();
     auto req = user.IRCRead();
     if(req.op == irc::IRC_REQUEST_OP::NICK) {
-        auto u = server->ReadUser(user.nickName);
+        auto nick = req.cmds[1];
+        auto u = server->ReadUser(nick);
         if (u == NULL ){
             user.nickName = req.cmds[1];            
+        } else {
+            // 用户名已经被使用
+            auto args = std::vector<std::string>();
+
+            args.push_back(user.nickName);
+            args.push_back(nick);
+            args.push_back(":Nickname is already in use.");
+
+            auto resp = irc::IRCResponse(
+                    server->host,
+                    server->port,
+                    irc::RESP_CODE::RPL_WELCOME,
+                    args
+            );
+            return
         }
     }
-    // 检查nikc
     req = user.IRCRead();
     if (req.op == irc::IRC_REQUEST_OP::USER) {
         user.userName = req.cmds[1];
