@@ -3,7 +3,7 @@
 irc::Server::Server()
 {
     host = "localhost";
-    port = 8080;
+    port = "8080";
 }
 
 irc::Server *irc::Server::GetInstance()
@@ -55,10 +55,10 @@ void irc::Server::SetChannel(std::string name, irc::Channel *channel)
     g_lock.unlock();
 }
 
-void irc::Server::RunServe(int port)
+void irc::Server::RunServe()
 {
     int server_fd = SSocket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-    ComboAddress local_addr("127.0.0.1", port);
+    ComboAddress local_addr(host+":"+port);
     SBind(server_fd, local_addr);
     SListen(server_fd, SOMAXCONN);
     int client_fd;
