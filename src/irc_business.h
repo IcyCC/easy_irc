@@ -2,8 +2,8 @@
 // Created by 苏畅 on 2019/5/4.
 //
 
-#ifndef SRC_BUSSINESS_H
-#define SRC_BUSSINESS_H
+#pragma once
+
 
 #include "irc_user.h"
 #include "irc_server.h"
@@ -13,5 +13,3 @@ namespace irc {
         void Login(irc::User &user);
     }
 }
-
-#endif //SRC_BUSSINESS_H

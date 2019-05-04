@@ -1,10 +1,8 @@
-#ifndef SRC_IRC_ERROR_H
-#define SRC_IRC_ERROR_H
+#pragma once
+
 
 namespace irc {
     enum ERROR_NO {
         SUCCESS
     };
 };
-
-#endif

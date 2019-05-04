@@ -1,5 +1,5 @@
-#ifndef SRC_IRC_USER_H
-#define SRC_IRC_USER_H
+#pragma once
+
 #include<string>
 #include<queue>
 #include"irc_error.h"
@@ -29,5 +29,3 @@ namespace irc {
         irc::ERROR_NO Logout();
     };
 }
-
-#endif
