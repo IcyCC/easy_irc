@@ -1,4 +1,5 @@
-#pragma once
+#ifndef SRC_IRC_SESSION_H
+#define SRC_IRC_SESSION_H
 #include<string>
 #include"irc_error.h"
 #include"irc_response.h"
@@ -12,6 +13,7 @@ namespace irc {
         P2P,
         CHANNEL
     };
+    
     class UserSession {
     public:
         USER_SESSION_STATE state;
@@ -22,3 +24,5 @@ namespace irc {
         ~UserSession() = default;
     };
 }
+
+#endif
