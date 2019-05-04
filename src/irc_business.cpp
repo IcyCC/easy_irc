@@ -42,7 +42,7 @@ void irc::business::Login(irc::User &user){
                     irc::RESP_CODE::RPL_WELCOME,
                     args
             );
-            return
+            return;
         }
     }
     req = user.IRCRead();
@@ -78,7 +78,7 @@ void irc::business::Chat(irc::User &user, irc::IRCRequest &req) {
     } else {
         // 找到user
         auto args = std::vector<std::string>();
-        args.push_back(char_user.nickName);
+        args.push_back(char_user->nickName);
         args.push_back(msg);
         auto resp = irc::IRCResponse(
                 server->host,
@@ -86,6 +86,6 @@ void irc::business::Chat(irc::User &user, irc::IRCRequest &req) {
                 irc::RESP_CODE::RPL_WELCOME,
                 args
         );
-        char_user.IRCPushMessage(resp);
+        char_user->IRCPushMessage(resp);
     }
 }
