@@ -23,7 +23,7 @@ namespace irc {
         User(std::string _nickName, std::string _userName, Socket *_socket);
         ~User()=default;
     public:
-        irc::ERROR_NO IRCPushMessage(irc::IRCResponse *msg); // 通过套接字给改用户发送消息
+        irc::ERROR_NO IRCPushMessage(irc::IRCResponse &msg); // 通过套接字给改用户发送消息
         irc::IRCRequest IRCRead(); // 读取请求
         irc::ERROR_NO Login(Socket *_socket);
         irc::ERROR_NO Logout();

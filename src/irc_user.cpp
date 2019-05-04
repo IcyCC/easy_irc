@@ -35,13 +35,13 @@ namespace irc {
         return SUCCESS;
     }
 
-    irc::ERROR_NO User::IRCPushMessage(irc::IRCResponse *msg)
+    irc::ERROR_NO User::IRCPushMessage(irc::IRCResponse &msg)
     {
         if(this->state) {
             SocketCommunicator SC(*(this->socket));
-            SC.writen(msg->ToString());
+            SC.writen(msg.ToString());
         } else {
-            this->mesgQueue.push(*msg);
+            this->mesgQueue.push(msg);
         }
         return SUCCESS;
     }
