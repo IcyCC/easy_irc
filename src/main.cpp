@@ -1,6 +1,7 @@
 #include"irc_user.h"
 #include"irc_server.h"
 #include"irc_request.h"
+#include "irc_response.h"
 #include<iostream>
 
 void test_Request (){
@@ -11,5 +12,6 @@ void test_Request (){
 
 int main (){
     test_Request();
+    std::cout<<irc::RESP_CODE::ERR_NICKNAMEINUSE;
     return 0;
 }
