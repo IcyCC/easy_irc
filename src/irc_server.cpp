@@ -12,6 +12,7 @@ irc::Server *irc::Server::GetInstance()
     g_lock.lock();
     if (_server == NULL)
     {
+        g_lock.unlock();
         _server = new irc::Server();
     }
     g_lock.unlock();
@@ -24,6 +25,7 @@ irc::User *irc::Server::ReadUser(std::string name)
     auto user = UserMap.find(name);
     if (user == UserMap.end())
     {
+        g_lock.unlock();
         return NULL;
     }
     g_lock.unlock();
@@ -36,6 +38,7 @@ irc::Channel *irc::Server::ReadChannel(std::string name)
     auto channel = ChannelMap.find(name);
     if (channel == ChannelMap.find(name))
     {
+        g_lock.unlock();
         return NULL;
     }
     g_lock.unlock();
