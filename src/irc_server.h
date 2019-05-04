@@ -32,7 +32,7 @@ class Server
     void SetChannel(std::string name, irc::Channel *Channel);
 
   public:
-    void RunServe(int port); // 运行服务
+    void RunServe(); // 运行服务
     static Server *GetInstance();
 };
 } // namespace irc

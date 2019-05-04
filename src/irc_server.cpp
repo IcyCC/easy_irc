@@ -3,7 +3,7 @@
 irc::Server::Server()
 {
     host = "localhost";
-    port = 8080;
+    port = "8080";
 }
 
 irc::Server *irc::Server::GetInstance()
@@ -13,8 +13,8 @@ irc::Server *irc::Server::GetInstance()
     {
         _server = new irc::Server();
     }
-    return _server;
     g_lock.unlock();
+    return _server;
 }
 
 irc::User *irc::Server::ReadUser(std::string name)
@@ -25,8 +25,8 @@ irc::User *irc::Server::ReadUser(std::string name)
     {
         return NULL;
     }
-    return user->second;
     g_lock.unlock();
+    return user->second;
 }
 
 irc::Channel *irc::Server::ReadChannel(std::string name)
@@ -37,29 +37,28 @@ irc::Channel *irc::Server::ReadChannel(std::string name)
     {
         return NULL;
     }
-    return channel->second;
     g_lock.unlock();
+    return channel->second;
 }
 
 void irc::Server::SetUser(std::string name, irc::User *user)
 {
     g_lock.lock();
-    UserMap.insert(std::pair<std::string, irc::User* >(name, user));
+    UserMap.insert(std::pair<std::string, irc::User *>(name, user));
     g_lock.unlock();
 }
 
 void irc::Server::SetChannel(std::string name, irc::Channel *channel)
 {
     g_lock.lock();
-    ChannelMap.insert(std::pair<std::string, irc::Channel* >(name, channel));
+    ChannelMap.insert(std::pair<std::string, irc::Channel *>(name, channel));
     g_lock.unlock();
 }
 
-
-void irc::Server::RunServe(int port)
+void irc::Server::RunServe()
 {
     int server_fd = SSocket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-    ComboAddress local_addr("127.0.0.1", port);
+    ComboAddress local_addr(host+":"+port);
     SBind(server_fd, local_addr);
     SListen(server_fd, SOMAXCONN);
     int client_fd;
