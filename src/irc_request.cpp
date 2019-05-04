@@ -11,7 +11,7 @@ irc::IRCRequest::IRCRequest(std::string& _raw) {
     }
     if (cmds[0] == "NICK") {
         op = irc::IRC_REQUEST_OP::NICK;
-    } else if(cmds[0] == "USRE") {
+    } else if(cmds[0] == "USER") {
         op = irc::IRC_REQUEST_OP::USER;
     } else if (cmds[0] == "QUIT"){
         op = irc::IRC_REQUEST_OP::QUIT;
