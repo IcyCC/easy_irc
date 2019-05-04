@@ -1,11 +1,10 @@
 // 此处存放工具
-#pragma once
-
+#ifndef SRC_IRC_UTIL_H
+#define SRC_IRC_UTIL_H
 //
 // Created by 苏畅 on 2019/1/7.
 // 常用的工具函数
 //
-#pragma once
 
 #include <string>
 #include <map>
@@ -93,3 +92,4 @@ inline bool IsEndWith(std::string s, std::string m) {
     }
     return true;
 }
+#endif
