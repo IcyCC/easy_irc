@@ -1,12 +1,9 @@
 #include "irc_server.h"
 
-
 irc::Server::Server()
 {
     host = "localhost";
     port = 8080;
-    UserMap = std::map<std::string, irc::User *>();
-    ChannelMap = std::map<std::string, irc::Channel *>();
 }
 
 irc::Server *irc::Server::GetInstance()
@@ -44,6 +41,21 @@ irc::Channel *irc::Server::ReadChannel(std::string name)
     g_lock.unlock();
 }
 
+void irc::Server::SetUser(std::string name, irc::User *user)
+{
+    g_lock.lock();
+    UserMap.insert(std::pair<std::string, irc::User* >(name, user));
+    g_lock.unlock();
+}
+
+void irc::Server::SetChannel(std::string name, irc::Channel *channel)
+{
+    g_lock.lock();
+    ChannelMap.insert(std::pair<std::string, irc::Channel* >(name, channel));
+    g_lock.unlock();
+}
+
+
 void irc::Server::RunServe(int port)
 {
     int server_fd = SSocket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
@@ -52,9 +64,10 @@ void irc::Server::RunServe(int port)
     SListen(server_fd, SOMAXCONN);
     int client_fd;
     ComboAddress client_addr = ComboAddress();
-    while(client_fd = SAccept(server_fd, client_addr)) {
+    while (client_fd = SAccept(server_fd, client_addr))
+    {
         auto user = new irc::User();
-        user->socket = Socket(client_fd);
-        std::thread t();
+        user->socket = client_fd;
+        std::thread t(irc::business::MainLogic, user);
     }
 }
