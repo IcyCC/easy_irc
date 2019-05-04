@@ -4,6 +4,8 @@
 #include "irc_response.h"
 #include<iostream>
 
+std::mutex g_lock;
+
 void test_Request (){
     std::string t = "NICK username\r\n";
     auto r = irc::IRCRequest(t);
