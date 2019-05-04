@@ -13,8 +13,8 @@ irc::Server *irc::Server::GetInstance()
     {
         _server = new irc::Server();
     }
-    return _server;
     g_lock.unlock();
+    return _server;
 }
 
 irc::User *irc::Server::ReadUser(std::string name)
@@ -25,8 +25,8 @@ irc::User *irc::Server::ReadUser(std::string name)
     {
         return NULL;
     }
-    return user->second;
     g_lock.unlock();
+    return user->second;
 }
 
 irc::Channel *irc::Server::ReadChannel(std::string name)
@@ -37,24 +37,23 @@ irc::Channel *irc::Server::ReadChannel(std::string name)
     {
         return NULL;
     }
-    return channel->second;
     g_lock.unlock();
+    return channel->second;
 }
 
 void irc::Server::SetUser(std::string name, irc::User *user)
 {
     g_lock.lock();
-    UserMap.insert(std::pair<std::string, irc::User* >(name, user));
+    UserMap.insert(std::pair<std::string, irc::User *>(name, user));
     g_lock.unlock();
 }
 
 void irc::Server::SetChannel(std::string name, irc::Channel *channel)
 {
     g_lock.lock();
-    ChannelMap.insert(std::pair<std::string, irc::Channel* >(name, channel));
+    ChannelMap.insert(std::pair<std::string, irc::Channel *>(name, channel));
     g_lock.unlock();
 }
-
 
 void irc::Server::RunServe(int port)
 {
