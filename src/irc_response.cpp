@@ -15,5 +15,6 @@ std::string irc::IRCResponse::ToString() {
     for (auto &i: cmds ){
         res = res + i + " ";
     }
+    res  = res + "\r\n";
     return res;
 }

@@ -8,10 +8,13 @@
 #include "irc_user.h"
 #include "irc_request.h"
 #include "irc_server.h"
+#include <vector>
 
 namespace irc {
     namespace business {
         void MainLogic(irc::User &user);
         void Login(irc::User &user);
+
+        void Chat(irc::User &user, irc::IRCRequest &req);
     }
 }
