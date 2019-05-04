@@ -1,4 +1,3 @@
-
 #pragma once
 #include<map>
 #include"irc_error.h"

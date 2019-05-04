@@ -10,6 +10,7 @@
 
 namespace irc {
     namespace business {
+        void MainLogic(irc::User &user);
         void Login(irc::User &user);
     }
 }
