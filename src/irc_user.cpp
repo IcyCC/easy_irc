@@ -33,7 +33,7 @@ namespace irc {
         return SUCCESS;
     }
 
-    irc::ERROR_NO User::IRCPushMessage(IRCResponse *msg)
+    irc::ERROR_NO User::IRCPushMessage(irc::IRCResponse *msg)
     {
         if(this->state) {
             SocketCommunicator SC(*(this->socket));
