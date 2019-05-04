@@ -6,7 +6,7 @@
 #include"irc_response.h"
 #include"irc_request.h"
 #include"irc_session.h"
-#include"sclasses.hh"
+#include"swrappers.hh"
 
 namespace irc {
     extern const std::string ANONYMOUS;
