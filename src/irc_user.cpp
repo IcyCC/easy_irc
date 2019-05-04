@@ -1,10 +1,12 @@
 #include "irc_user.h"
 
 namespace irc {
+    const std::string ANONYMOUS = "*";
+
     User::User()
     {
-        this->nickName = anonymous;
-        this->userName = anonymous;
+        this->nickName = ANONYMOUS;
+        this->userName = ANONYMOUS;
         this->socket = NULL;
         this->state = false;
         this->session.state = IDLE;
