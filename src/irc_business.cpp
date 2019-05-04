@@ -3,6 +3,13 @@
 //
 
 #include "irc_business.h"
+void irc::business::MainLogic(irc::User &user){
+
+    auto req = user.IRCRead();
+    if(req.op == irc::IRC_REQUEST_OP::NICK) {
+
+    }
+}
 
 void irc::business::Login(irc::User &user){
 
