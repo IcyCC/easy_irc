@@ -1,6 +1,7 @@
 #include "swrappers.hh"
 #include <map>
 #include <unistd.h>
+#include "util.h"
 #include <fcntl.h>
 
 /** these functions provide a very lightweight wrapper to the Berkeley sockets API. Errors -> exceptions! */
@@ -15,7 +16,7 @@ int SSocket(int family, int type, int flags)
 {
   int ret = socket(family, type, flags);
   if(ret < 0)
-    RuntimeError("SOCKET ERROR 1");
+    RuntimeError(strerror(errno));
   return ret;
 }
 
@@ -24,7 +25,7 @@ int SConnect(int sockfd, const ComboAddress& remote)
   int ret = connect(sockfd, (struct sockaddr*)&remote, remote.getSocklen());
   if(ret < 0) {
     int savederrno = errno;
-    RuntimeError("SOCKET ERROR 1");
+    RuntimeError(strerror(errno));
   }
   return ret;
 }
@@ -34,7 +35,7 @@ int SBind(int sockfd, const ComboAddress& local)
   int ret = bind(sockfd, (struct sockaddr*)&local, local.getSocklen());
   if(ret < 0) {
     int savederrno = errno;
-    RuntimeError("SOCKET ERROR 1");
+    RuntimeError(strerror(errno));
   }
   return ret;
 }
@@ -45,7 +46,7 @@ int SAccept(int sockfd, ComboAddress& remote)
 
   int ret = accept(sockfd, (struct sockaddr*)&remote, &remlen);
   if(ret < 0)
-    RuntimeError("SOCKET ERROR 1");
+    RuntimeError(strerror(errno));
   return ret;
 }
 
@@ -53,7 +54,7 @@ int SListen(int sockfd, int limit)
 {
   int ret = listen(sockfd, limit);
   if(ret < 0)
-    RuntimeError("SOCKET ERROR 1");
+    RuntimeError(strerror(errno));
   return ret;
 }
 
@@ -61,7 +62,7 @@ int SSetsockopt(int sockfd, int level, int opname, int value)
 {
   int ret = setsockopt(sockfd, level, opname, &value, sizeof(value));
   if(ret < 0)
-    RuntimeError("SOCKET ERROR 1");
+    RuntimeError(strerror(errno));
   return ret;
 }
 
@@ -69,7 +70,7 @@ void SWrite(int sockfd, const std::string& content, std::string::size_type *wrle
 {
   int res = write(sockfd, &content[0], content.size());
   if(res < 0)
-    RuntimeError("SOCKET ERROR 1");
+    RuntimeError(strerror(errno));
   if(wrlen) 
     *wrlen = res;
 
@@ -77,7 +78,7 @@ void SWrite(int sockfd, const std::string& content, std::string::size_type *wrle
     if(wrlen) {
       return;
     }
-    RuntimeError("SOCKET ERROR 1");
+    RuntimeError(strerror(errno));
   }
 }
 
@@ -87,9 +88,9 @@ void SWriten(int sockfd, const std::string& content)
   for(;;) {
     int res = write(sockfd, &content[pos], content.size()-pos);
     if(res < 0)
-      RuntimeError("SOCKET ERROR 1");
+      RuntimeError(strerror(errno));
     if(!res)
-      RuntimeError("SOCKET ERROR 1");
+      RuntimeError(strerror(errno));
     pos += res;
     if(pos == content.size())
       break;
@@ -105,11 +106,14 @@ std::string SRead(int sockfd, std::string::size_type limit)
     auto chunk = sizeof(buffer) < leftToRead ? sizeof(buffer) : leftToRead;
     int res = read(sockfd, buffer, chunk);
     if(res < 0)
-      RuntimeError("SOCKET ERROR 1");
+      RuntimeError(strerror(errno));
     if(!res)
-      break;
+      continue;
     ret.append(buffer, res);
     leftToRead -= res;
+    if(IsEndWith(ret, "\r\n")){
+      break;
+    }
   }
   return ret;
 }
@@ -118,14 +122,14 @@ void SSendto(int sockfd, const std::string& content, const ComboAddress& dest, i
 {
   int ret = sendto(sockfd, &content[0], content.size(), flags, (struct sockaddr*)&dest, dest.getSocklen());
   if(ret < 0)
-    RuntimeError("SOCKET ERROR 1");
+    RuntimeError(strerror(errno));
 }
 
 int SSend(int sockfd, const std::string& content, int flags)
 {
   int ret = send(sockfd, &content[0], content.size(), flags);
   if(ret < 0)
-    RuntimeError("SOCKET ERROR 1");
+    RuntimeError(strerror(errno));
   return ret;
 }
 
@@ -139,7 +143,7 @@ std::string SRecvfrom(int sockfd, std::string::size_type limit, ComboAddress& de
   int res = recvfrom(sockfd, &ret[0], ret.size(), flags, (struct sockaddr*)&dest, &slen);
   
   if(res < 0)
-    RuntimeError("SOCKET ERROR 1");
+    RuntimeError(strerror(errno));
     
   ret.resize(res);
   return ret;
@@ -149,7 +153,7 @@ void SGetsockname(int sock, ComboAddress& orig)
 {
   socklen_t slen=orig.getSocklen();
   if(getsockname(sock, (struct sockaddr*)&orig, &slen) < 0)
-    RuntimeError("SOCKET ERROR 1");
+    RuntimeError(strerror(errno));
 }
 
 
@@ -157,7 +161,7 @@ void SetNonBlocking(int sock, bool to)
 {
   int flags=fcntl(sock,F_GETFL,0);
   if(flags<0)
-    RuntimeError("SOCKET ERROR 1");
+    RuntimeError(strerror(errno));
 
   // so we could optimize to not do it if nonblocking already set, but that would be.. semantics
   if(to) {
@@ -167,7 +171,7 @@ void SetNonBlocking(int sock, bool to)
     flags &= (~O_NONBLOCK);
       
   if(fcntl(sock, F_SETFL, flags) < 0)
-    RuntimeError("SOCKET ERROR 1");
+    RuntimeError(strerror(errno));
 }
 
 std::map<int, short> SPoll(const std::vector<int>&rdfds, const std::vector<int>&wrfds, double timeout)
@@ -185,7 +189,7 @@ std::map<int, short> SPoll(const std::vector<int>&rdfds, const std::vector<int>&
   }
   int res = poll(&pfds[0], pfds.size(), timeout*1000);
   if(res < 0)
-    RuntimeError("SOCKET ERROR 1");
+    RuntimeError(strerror(errno));
   inputs.clear();
   if(res) {
     for(const auto& pfd : pfds) {

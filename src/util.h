@@ -11,6 +11,7 @@
 #include <list>
 #include <sstream>
 #include <vector>
+#include <iostream>
 #include <cstring>
 #include <unistd.h>
 #include <sys/types.h>
@@ -91,4 +92,9 @@ inline bool IsEndWith(std::string s, std::string m) {
         }
     }
     return true;
+}
+
+
+inline void LogC(std::string s){
+    std::cout<<s<<std::endl;
 }

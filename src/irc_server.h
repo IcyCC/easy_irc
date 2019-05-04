@@ -6,6 +6,7 @@
 #include "irc_channel.h"
 #include "irc_user.h"
 #include "irc_business.h"
+#include "util.h"
 #include <thread>
 #include <mutex>
 

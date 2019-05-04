@@ -51,26 +51,26 @@ int SConnectWithTimeout(int sockfd, const ComboAddress& remote, double timeout=-
           savederrno = 0;
           socklen_t errlen = sizeof(savederrno);
           if (getsockopt(sockfd, SOL_SOCKET, SO_ERROR, (void *)&savederrno, &errlen) == 0) {
-            throw std::runtime_error("SOCKET ERROR 1");
+            throw std::runtime_error(strerror(errno));
           }
           else {
-            throw std::runtime_error("SOCKET ERROR 1");
+            throw std::runtime_error(strerror(errno));
           }
         }
         if (disconnected) {
-          throw std::runtime_error("SOCKET ERROR 1");;
+          throw std::runtime_error(strerror(errno));
         }
         return 0;
       }
       else if (res == 0) {
-        throw std::runtime_error("SOCKET ERROR 1");
+        throw std::runtime_error(strerror(errno));
       } else if (res < 0) {
         savederrno = errno;
-        throw std::runtime_error("SOCKET ERROR 1");
+        throw std::runtime_error(strerror(errno));
       }
     }
     else {
-      throw std::runtime_error("SOCKET ERROR 1");
+      throw std::runtime_error(strerror(errno));
     }
   }
 
