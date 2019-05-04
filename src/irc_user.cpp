@@ -1,10 +1,12 @@
 #include "irc_user.h"
 
 namespace irc {
+    const std::string ANONYMOUS = "*";
+
     User::User()
     {
-        this->nickName = irc::ANNOOYMOUS;
-        this->userName = irc::ANNOOYMOUS;
+        this->nickName = irc::ANONYMOUS;
+        this->userName = irc::ANONYMOUS;
         this->socket = NULL;
         this->state = false;
         this->session.state = IDLE;
@@ -33,13 +35,13 @@ namespace irc {
         return SUCCESS;
     }
 
-    irc::ERROR_NO User::IRCPushMessage(irc::IRCResponse *msg)
+    irc::ERROR_NO User::IRCPushMessage(irc::IRCResponse &msg)
     {
         if(this->state) {
             SocketCommunicator SC(*(this->socket));
-            SC.writen(msg->ToString());
+            SC.writen(msg.ToString());
         } else {
-            this->mesgQueue.push(*msg);
+            this->mesgQueue.push(msg);
         }
         return SUCCESS;
     }
