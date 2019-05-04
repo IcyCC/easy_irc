@@ -3,8 +3,8 @@
 namespace irc {
     User::User()
     {
-        this->nickName = anonymous;
-        this->userName = anonymous;
+        this->nickName = irc::ANNOOYMOUS;
+        this->userName = irc::ANNOOYMOUS;
         this->socket = NULL;
         this->state = false;
         this->session.state = IDLE;

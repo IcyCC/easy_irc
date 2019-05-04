@@ -9,7 +9,7 @@
 #include"sclasses.hh"
 
 namespace irc {
-    const std::string anonymous = "*";
+    const std::string ANNOOYMOUS = "123";
     class User {
     public:
         Socket* socket;

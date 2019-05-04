@@ -5,8 +5,8 @@
 
 namespace irc {
     namespace RESP_CODE {
-        const std::string RPL_WELCOME = "001";
-        const std::string ERR_NICKNAMEINUSE = "443";
+        extern const std::string RPL_WELCOME;
+        extern const std::string ERR_NICKNAMEINUSE;
 
     }
 
