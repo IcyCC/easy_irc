@@ -6,16 +6,6 @@ irc::Server::Server()
     port = "8080";
 }
 
-irc::Server *irc::Server::GetInstance()
-{
-    g_lock.lock();
-    if (_server == NULL)
-    {
-        _server = new irc::Server();
-    }
-    g_lock.unlock();
-    return _server;
-}
 
 irc::User *irc::Server::ReadUser(std::string name)
 {

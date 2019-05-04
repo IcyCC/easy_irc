@@ -3,10 +3,10 @@
 //
 
 #include "irc_business.h"
-void irc::business::MainLogic(irc::User &user){
+void irc::business::MainLogic(irc::User *user){
    Login(user);
    while(true) {
-       auto req = user.IRCRead();
+       auto req = user->IRCRead();
        switch(req.op){
            case irc::IRC_REQUEST_OP::QUIT:
                break;
@@ -19,20 +19,20 @@ void irc::business::MainLogic(irc::User &user){
    }
 }
 
-void irc::business::Login(irc::User &user){
+void irc::business::Login(irc::User *user){
 
     auto server = irc::Server::GetInstance();
-    auto req = user.IRCRead();
+    auto req = user->IRCRead();
     if(req.op == irc::IRC_REQUEST_OP::NICK) {
         auto nick = req.cmds[1];
         auto u = server->ReadUser(nick);
         if (u == NULL ){
-            user.nickName = req.cmds[1];            
+            user->nickName = req.cmds[1];            
         } else {
             // 用户名已经被使用
             auto args = std::vector<std::string>();
 
-            args.push_back(user.nickName);
+            args.push_back(user->nickName);
             args.push_back(nick);
             args.push_back(":Nickname is already in use.");
 
@@ -45,14 +45,14 @@ void irc::business::Login(irc::User &user){
             return;
         }
     }
-    req = user.IRCRead();
+    req = user->IRCRead();
     if (req.op == irc::IRC_REQUEST_OP::USER) {
-        user.userName = req.cmds[1];
+        user->userName = req.cmds[1];
     }
 
     auto args = std::vector<std::string>();
 
-    args.push_back(user.nickName);
+    args.push_back(user->nickName);
     args.push_back("Welcome to the Internet Relay Network borja!borja@polaris.cs.uchicago.edu");
 
     auto resp = irc::IRCResponse(
@@ -62,10 +62,10 @@ void irc::business::Login(irc::User &user){
         args 
     );
 
-    user.IRCPushMessage(resp);
+    user->IRCPushMessage(resp);
 }
 
-void irc::business::Chat(irc::User &user, irc::IRCRequest &req) {
+void irc::business::Chat(irc::User *user, irc::IRCRequest &req) {
     auto server = irc::Server::GetInstance();
 
     auto char_user_nick = req.cmds[1];
