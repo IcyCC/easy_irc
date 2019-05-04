@@ -3,9 +3,9 @@
 
 #include<string>
 #include"irc_error.h"
-#include"irc_response.h"
 #include"irc_request.h"
 #include"irc_user.h"
+#include"irc_response.h"
 
 namespace irc {
     class Channel {

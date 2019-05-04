@@ -1,5 +1,3 @@
-#ifndef SRC_IRC_SERVER_H
-#define SRC_IRC_SERVER_H
 
 #pragma once
 #include<map>
@@ -27,4 +25,3 @@ namespace irc {
         static Server* GetInstance();
     };
 }
-#endif

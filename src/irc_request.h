@@ -1,5 +1,5 @@
-#ifndef SRC_IRC_REQUEST_H
-#define SRC_IRC_REQUEST_H
+#pragma once
+
 #include<string>
 #include<vector>
 
@@ -32,5 +32,3 @@ namespace irc {
 
     };
 }
-
-#endif

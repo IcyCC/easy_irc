@@ -1,5 +1,5 @@
-#ifndef SRC_IRC_USER_H
-#define SRC_IRC_USER_H
+#pragma once
+
 #include<string>
 #include"irc_error.h"
 #include"irc_response.h"
@@ -15,5 +15,3 @@ namespace irc {
         irc::IRCRequest IRCRead(); // 读取请求
     };
 }
-
-#endif

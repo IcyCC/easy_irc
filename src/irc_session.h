@@ -1,5 +1,4 @@
-#ifndef SRC_IRC_SESSION_H
-#define SRC_IRC_SESSION_H
+
 #include<string>
 #include"irc_error.h"
 #include"irc_response.h"
@@ -19,5 +18,3 @@ namespace irc {
         std::string chat_name;
     };
 }
-
-#endif
