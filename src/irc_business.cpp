@@ -4,7 +4,14 @@
 
 #include "irc_business.h"
 void irc::business::MainLogic(irc::User &user){
-   
+   Login(user);
+   while(true) {
+       auto req = user.IRCRead();
+       switch(req.op){
+           case irc::IRC_REQUEST_OP::QUIT:
+               break;
+       }
+   }
 }
 
 void irc::business::Login(irc::User &user){
@@ -14,9 +21,8 @@ void irc::business::Login(irc::User &user){
     if(req.op == irc::IRC_REQUEST_OP::NICK) {
         auto u = server->ReadUser(user.nickName);
         if (u == NULL ){
-            
+            user.nickName = req.cmds[1];            
         }
-        user.nickName = req.cmds[1];
     }
     // 检查nikc
     req = user.IRCRead();

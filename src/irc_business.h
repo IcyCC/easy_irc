@@ -6,6 +6,7 @@
 
 
 #include "irc_user.h"
+#include "irc_request.h"
 #include "irc_server.h"
 
 namespace irc {
