@@ -1,3 +1,6 @@
+#ifndef SRC_IRC_SERVER_H
+#define SRC_IRC_SERVER_H
+
 #pragma once
 #include<map>
 #include"irc_error.h"
@@ -24,3 +27,4 @@ namespace irc {
         static Server* GetInstance();
     };
 }
+#endif

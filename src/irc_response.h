@@ -1,4 +1,5 @@
-#pragma once
+#ifndef SRC_IRC_RESPONSE_H
+#define SRC_IRC_RESPONSE_H
 
 #include<string>
 #include <vector>
@@ -29,4 +30,5 @@ namespace irc {
     public:
         std::string ToString();
     };
-};
+}
+#endif //SRC_IRC_RESPONSE_H
