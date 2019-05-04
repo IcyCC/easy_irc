@@ -2,12 +2,11 @@
 
 #include<string>
 #include <vector>
-//#include "irc_server.h"
 
 namespace irc {
     namespace RESP_CODE {
-        const std::string RPL_WELCOME = "001";
-        const std::string ERR_NICKNAMEINUSE = "443";
+        extern const std::string RPL_WELCOME;
+        extern const std::string ERR_NICKNAMEINUSE;
 
     }
 
@@ -17,13 +16,12 @@ namespace irc {
         std::string code;
         std::vector<std::string> cmds;
     public:
-        IRCResponse(const std::string _code,  std::vector<std::string>& _cmds) {
-//            auto server = irc::Server::GetInstance();
-//            src = ":"+ server->host +":"+server->port;
-//            code = _code;
-//            for (auto &i : _cmds){
-//                cmds.push_back(i);
-//            }
+        IRCResponse(std::string& _host, std::string& _port, const std::string& _code,  std::vector<std::string>& _cmds) {
+            src = ":"+ _host +":"+ _port;
+            code = _code;
+            for (auto &i : _cmds){
+                cmds.push_back(i);
+            }
         }
     public:
         std::string ToString();
