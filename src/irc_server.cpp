@@ -1,11 +1,22 @@
 #include "irc_server.h"
 
+irc::Server* irc::Server::_server = NULL;
 irc::Server::Server()
 {
-    host = "localhost";
-    port = "8080";
+    host = "127.0.0.1";
+    port = "10086";
 }
 
+irc::Server *irc::Server::GetInstance()
+{
+    g_lock.lock();
+    if (_server == NULL)
+    {
+        _server = new irc::Server();
+    }
+    g_lock.unlock();
+    return _server;
+}
 
 irc::User *irc::Server::ReadUser(std::string name)
 {
@@ -58,5 +69,6 @@ void irc::Server::RunServe()
         auto user = new irc::User();
         user->socket = client_fd;
         std::thread t(irc::business::MainLogic, user);
+        t.detach();
     }
 }

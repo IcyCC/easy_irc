@@ -7,7 +7,7 @@
 #include "irc_user.h"
 #include "irc_business.h"
 #include <thread>
-#include
+#include <mutex>
 
 extern std::mutex g_lock;
 
@@ -15,7 +15,7 @@ namespace irc
 {
 class Server
 {
-  private:
+  public:
     static Server *_server;
 
   public:
@@ -35,5 +35,6 @@ class Server
   public:
     void RunServe(); // 运行服务
     static Server *GetInstance();
+    Server();
 };
 } // namespace irc
