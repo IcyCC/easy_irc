@@ -25,6 +25,10 @@ namespace irc {
     {
         this->socket = _socket;
         this->state = true;
+        while(!mesgQueue.empty()) {
+            IRCPushMessage(mesgQueue.front());
+            mesgQueue.pop();
+        }
         return SUCCESS;
     }
 
@@ -38,8 +42,7 @@ namespace irc {
     irc::ERROR_NO User::IRCPushMessage(irc::IRCResponse &msg)
     {
         if(this->state) {
-            SocketCommunicator SC(this->socket);
-            SC.writen(msg.ToString());
+            SWriten(this->socket, msg.ToString());
         } else {
             this->mesgQueue.push(msg);
         }
@@ -48,9 +51,7 @@ namespace irc {
 
     irc::IRCRequest User::IRCRead()
     {
-        SocketCommunicator SC(this->socket);
-        std::string buffer;
-        SC.getLine(buffer);
+        std::string buffer = SRead(this->socket);
         return irc::IRCRequest(buffer);
     }
 }
