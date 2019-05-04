@@ -7,12 +7,12 @@ namespace irc {
     {
         this->nickName = irc::ANONYMOUS;
         this->userName = irc::ANONYMOUS;
-        this->socket = NULL;
         this->state = false;
         this->session.state = IDLE;
+        this->socket = -1;
     }
 
-    User::User(std::string _nickName,std::string _userName, Socket *_socket)
+    User::User(std::string _nickName,std::string _userName, int _socket)
     {
         this->nickName = _nickName;
         this->userName = _userName;
@@ -21,7 +21,7 @@ namespace irc {
         this->session.state = IDLE;
     }
 
-    irc::ERROR_NO User::Login(Socket *_socket)
+    irc::ERROR_NO User::Login(int _socket)
     {
         this->socket = _socket;
         this->state = true;
@@ -30,7 +30,7 @@ namespace irc {
 
     irc::ERROR_NO User::Logout()
     {
-        this->socket = NULL;
+        this->socket = -1;
         this->state = false;
         return SUCCESS;
     }
@@ -38,7 +38,7 @@ namespace irc {
     irc::ERROR_NO User::IRCPushMessage(irc::IRCResponse &msg)
     {
         if(this->state) {
-            SocketCommunicator SC(*(this->socket));
+            SocketCommunicator SC(this->socket);
             SC.writen(msg.ToString());
         } else {
             this->mesgQueue.push(msg);
@@ -48,7 +48,7 @@ namespace irc {
 
     irc::IRCRequest User::IRCRead()
     {
-        SocketCommunicator SC(*(this->socket));
+        SocketCommunicator SC(this->socket);
         std::string buffer;
         SC.getLine(buffer);
         return irc::IRCRequest(buffer);
