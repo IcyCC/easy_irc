@@ -59,7 +59,8 @@ namespace irc {
     }
 
     int irc::User::PushOfflineMessage()
-    {   int msg_num = 0;
+    {   
+        int msg_num = 0;
         while(!mesgQueue.empty()) {
             try {
                 IRCPushMessage(mesgQueue.front());
