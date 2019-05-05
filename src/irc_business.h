@@ -14,6 +14,7 @@ namespace irc {
     namespace business {
         void Login(irc::User *user);
 
+        void JoinChannel(irc::User *user, irc::IRCRequest &req);
         void Chat(irc::User *user, irc::IRCRequest &req);
         void MainLogic(irc::User *user);
 

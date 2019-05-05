@@ -13,6 +13,8 @@ void irc::business::MainLogic(irc::User *user){
            case irc::IRC_REQUEST_OP::PRIVMSG:
                irc::business::Chat(user, req);
                break;
+           case irc::IRC_REQUEST_OP::JOIN:
+               irc::business::JoinChannel(user, req);
            default:
                break;
        }
@@ -83,6 +85,34 @@ void irc::business::Chat(irc::User *user, irc::IRCRequest &req) {
 
     } else {
         // 找到user
+        auto args = std::vector<std::string>();
+        args.push_back(char_user->nickName);
+        args.push_back(msg);
+        auto resp = irc::IRCResponse(
+                server->host,
+                server->port,
+                irc::RESP_CODE::RPL_WELCOME,
+                args
+        );
+        char_user->IRCPushMessage(resp);
+    }
+}
+
+void JoinChannel(irc::User *user, irc::IRCRequest &req)
+{
+    auto server = irc::Server::GetInstance();
+
+    auto char_channel_nick = req.cmds[1];
+
+    auto char_channel = server->ReadChannel(char_channel_nick);
+    if (char_channel == NULL) {
+        auto channel = new irc::Channel();
+        channel->name = char_channel_nick;
+        channel->users.push_back(user);
+        server->SetChannel(char_channel_nick, channel);
+        
+
+    } else {
         auto args = std::vector<std::string>();
         args.push_back(char_user->nickName);
         args.push_back(msg);
