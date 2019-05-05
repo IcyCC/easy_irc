@@ -12,10 +12,14 @@
 
 namespace irc {
     namespace business {
-        void Login(irc::User *user);
+        bool Login(irc::User *user);
 
         void Chat(irc::User *user, irc::IRCRequest &req);
         void MainLogic(irc::User *user);
+        void Motd(irc::User *user , irc::IRCRequest &req);
 
+        // 错误响应
+        void UnknowResp(irc::User *user, irc::IRCRequest &req);
+        void UnKnowNickResp(irc::User *user, irc::IRCRequest &req);
     }
 }

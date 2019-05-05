@@ -6,7 +6,8 @@
 
 const std::string irc::RESP_CODE::RPL_WELCOME = "001";
 const std::string irc::RESP_CODE::ERR_NICKNAMEINUSE = "433";
-
+const std::string irc::RESP_CODE::ERR_UNKNOWNCOMMAND = "421";
+const std::string irc::RESP_CODE::ERR_NOSUCHNICK = "401";
 
 std::string irc::IRCResponse::ToString() {
     std::string res;
