@@ -70,7 +70,7 @@ void irc::Server::RunServe()
     while (client_fd = SAccept(server_fd, client_addr))
     {
         auto user = new irc::User();
-        user->socket = client_fd;
+        user->Login(client_fd);
         LogC("收到链接请求");
         std::thread t(irc::business::MainLogic, user);
         t.detach();
