@@ -6,7 +6,7 @@
 void irc::business::MainLogic(int socketfd){
     User* user = NULL;
     try {
-        auto user = Login(socketfd);
+        user = Login(socketfd);
         while(user == NULL){
             user = Login(socketfd);
             LogC("登录失败");
@@ -281,6 +281,5 @@ void irc::business::PartChannel(irc::User *user, irc::IRCRequest &req)
 
 void irc::business::Quit(irc::User *user, irc::IRCRequest &req)
 {
-    auto server = irc::Server::GetInstance();
     user->Logout();
 }

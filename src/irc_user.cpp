@@ -36,7 +36,8 @@ namespace irc {
 
     irc::ERROR_NO User::Logout()
     {
-        close(socket);
+        if(socket > 0)
+            close(socket);
         this->socket = -1;
         this->state = false;
         return SUCCESS;
