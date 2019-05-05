@@ -69,10 +69,8 @@ void irc::Server::RunServe()
     ComboAddress client_addr = ComboAddress();
     while (client_fd = SAccept(server_fd, client_addr))
     {
-        auto user = new irc::User();
-        user->Login(client_fd);
         LogC("收到链接请求");
-        std::thread t(irc::business::MainLogic, user);
+        std::thread t(irc::business::MainLogic, client_fd);
         t.detach();
     }
 }
