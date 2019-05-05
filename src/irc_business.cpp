@@ -152,7 +152,7 @@ void irc::business::Chat(irc::User *user, irc::IRCRequest &req) {
 
 }
 
-void JoinChannel(irc::User *user, irc::IRCRequest &req)
+void irc::business::JoinChannel(irc::User *user, irc::IRCRequest &req)
 {
     auto server = irc::Server::GetInstance();
 
@@ -204,7 +204,7 @@ void JoinChannel(irc::User *user, irc::IRCRequest &req)
         irc::RESP_CODE::RPL_ENDOFNAMES,
         args
     );
-    user->IRCPushMessage(resp_names_list);
+    user->IRCPushMessage(resp_end_list);
 }
 
 void irc::business::UnknowResp(irc::User *user, irc::IRCRequest &req){
@@ -221,7 +221,7 @@ void irc::business::UnknowResp(irc::User *user, irc::IRCRequest &req){
     user->IRCPushMessage(resp);
 }
 
-void UnKnowNickResp(irc::User *user, irc::IRCRequest &req){
+void irc::business::UnKnowNickResp(irc::User *user, irc::IRCRequest &req){
     auto server = irc::Server::GetInstance();
     auto args = std::vector<std::string>();
     args.push_back(req.cmds[1]);
@@ -236,6 +236,6 @@ void UnKnowNickResp(irc::User *user, irc::IRCRequest &req){
 };
 
 
-void Motd(irc::User *user , irc::IRCRequest &req) {
+void irc::business::Motd(irc::User *user , irc::IRCRequest &req) {
     //
 }

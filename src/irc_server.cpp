@@ -36,7 +36,7 @@ irc::Channel *irc::Server::ReadChannel(std::string name)
 {
     g_lock.lock();
     auto channel = ChannelMap.find(name);
-    if (channel == ChannelMap.find(name))
+    if (channel == ChannelMap.end())
     {
         g_lock.unlock();
         return NULL;
