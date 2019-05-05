@@ -7,7 +7,10 @@ namespace irc {
     namespace RESP_CODE {
         extern const std::string RPL_WELCOME;
         extern const std::string ERR_NICKNAMEINUSE;
-
+        extern const std::string ERR_UNKNOWNCOMMAND;
+        extern const std::string ERR_NOSUCHNICK;
+        extern const std::string RPL_NAMREPLY;
+        extern const std::string RPL_ENDOFNAMES;
     }
 
     class IRCResponse {
