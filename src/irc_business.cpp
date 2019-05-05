@@ -3,9 +3,12 @@
 //
 
 #include "irc_business.h"
-void irc::business::MainLogic(irc::User *user){
+void irc::business::MainLogic(int socketfd){
+    User* user = NULL;
     try {
-        while(!Login(user)){
+        auto user = Login(socketfd);
+        while(user == NULL){
+            user = Login(socketfd);
             LogC("登录失败");
         }
 
@@ -41,23 +44,28 @@ void irc::business::MainLogic(irc::User *user){
 
 }
 
-bool irc::business::Login(irc::User *user){
+irc::User* irc::business::Login(int socketfd){
 
     auto server = irc::Server::GetInstance();
-    auto req = user->IRCRead();
+    auto tmp_user = User();
+    auto tmp_user_ptr = &tmp_user;
+    tmp_user_ptr -> Login(socketfd);
+    auto req = tmp_user.IRCRead();
     if(req.op == irc::IRC_REQUEST_OP::NICK) {
         auto nick = req.cmds[1];
         auto u = server->ReadUser(nick);
         if (u == NULL ){
-            user->nickName = req.cmds[1];
-            LogC("请求用户名 " + user->nickName + " 获取成功");
+            tmp_user_ptr = new User();
+            tmp_user_ptr->Login(socketfd);
+            tmp_user_ptr->nickName = req.cmds[1];
+            LogC("请求用户名 " + tmp_user_ptr->nickName + " 获取成功");
         } else {
             // 用户名已经被使用
             if (u->state){
                 // 别的用户登录中 无法拿到该会话
                 auto args = std::vector<std::string>();
-                LogC("请求用户名 " + user->nickName + " 失败");
-                args.push_back(user->nickName);
+                LogC("请求用户名 " + tmp_user_ptr->nickName + " 失败");
+                args.push_back(tmp_user_ptr->nickName);
                 args.push_back(nick);
                 args.push_back(":Nickname is already in use.");
 
@@ -67,33 +75,32 @@ bool irc::business::Login(irc::User *user){
                         irc::RESP_CODE::RPL_WELCOME,
                         args
                 );
-                user->IRCPushMessage(resp);
-                return false;
+                tmp_user.IRCPushMessage(resp);
+                return NULL;
             } else {
                 //  该账户重新上线
-                u->Login(user->socket);
-                delete user;
-                user = u;
+                u->Login(tmp_user.socket);
+                tmp_user_ptr = u;
             }
         }
     } else {
-        UnknowResp(user, req);
-        return false;
+        UnknowResp(tmp_user_ptr, req);
+        return NULL;
     }
 
     while (req.op != irc::IRC_REQUEST_OP::USER) {
-        req = user->IRCRead();
-        UnknowResp(user, req);
+        req = tmp_user_ptr->IRCRead();
+        UnknowResp(tmp_user_ptr, req);
     }
 
-    user->userName = req.cmds[1];
-    user->state = true;
-    server->SetUser(user->nickName, user);
-    LogC("请求名字 " + user->userName + " 成功");
+    tmp_user_ptr->userName = req.cmds[1];
+    tmp_user_ptr->state = true;
+    server->SetUser(tmp_user_ptr->nickName, tmp_user_ptr);
+    LogC("请求名字 " + tmp_user_ptr->userName + " 成功");
 
     auto args = std::vector<std::string>();
 
-    args.push_back(user->nickName);
+    args.push_back(tmp_user_ptr->nickName);
     args.push_back("Welcome to the Internet Relay Network borja!borja@polaris.cs.uchicago.edu");
 
     auto resp = irc::IRCResponse(
@@ -103,8 +110,8 @@ bool irc::business::Login(irc::User *user){
         args 
     );
 
-    user->IRCPushMessage(resp);
-    return true;
+    tmp_user_ptr->IRCPushMessage(resp);
+    return tmp_user_ptr;
 }
 
 void irc::business::Chat(irc::User *user, irc::IRCRequest &req) {
