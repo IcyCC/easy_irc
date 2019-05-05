@@ -13,6 +13,7 @@ void irc::business::MainLogic(irc::User *user){
             auto req = user->IRCRead();
             switch(req.op){
                 case irc::IRC_REQUEST_OP::QUIT:
+                    irc::business::Quit(user, req);
                     break;
                 case irc::IRC_REQUEST_OP::PRIVMSG:
                     irc::business::Chat(user, req);
@@ -22,6 +23,11 @@ void irc::business::MainLogic(irc::User *user){
                     break;
                 case irc::IRC_REQUEST_OP::JOIN:
                     irc::business::JoinChannel(user, req);
+                    break;
+                case irc::IRC_REQUEST_OP::PART:
+                    irc::business::PartChannel(user, req);
+                    break;
+                case irc::IRC_REQUEST_OP::USER:
                     break;
                 default:
                     UnknowResp(user, req);
@@ -164,7 +170,8 @@ void irc::business::JoinChannel(irc::User *user, irc::IRCRequest &req)
         char_channel->name = char_channel_nick;
         server->SetChannel(char_channel_nick, char_channel);
     }
-    char_channel->users.push_back(user);
+    if(std::find(char_channel->users.begin(), char_channel->users.end(), user->nickName)==char_channel->users.end())
+        char_channel->users.push_back(user);
 
     std::vector<std::string> args;
 
@@ -237,5 +244,15 @@ void irc::business::UnKnowNickResp(irc::User *user, irc::IRCRequest &req){
 
 
 void irc::business::Motd(irc::User *user , irc::IRCRequest &req) {
-    //
+    
+}
+
+void irc::business::PartChannel(irc::User *user, irc::IRCRequest &req)
+{
+
+}
+
+void irc::business::Quit(irc::User *user, irc::IRCRequest &req)
+{
+
 }

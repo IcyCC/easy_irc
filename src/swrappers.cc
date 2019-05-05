@@ -108,7 +108,7 @@ std::string SRead(int sockfd, std::string::size_type limit)
     if(res < 0)
       RuntimeError(strerror(errno));
     if(!res)
-      continue;
+      RuntimeError(strerror(errno));
     ret.append(buffer, res);
     leftToRead -= res;
     if(IsEndWith(ret, "\r\n")){
