@@ -294,6 +294,12 @@ union ComboAddress {
       return "invalid";
   }
 
+  //! Returns a string (human) represntation of the port
+  std::string portToString() const
+  {
+    return std::to_string(ntohs(sin4.sin_port));
+  }
+
   //! Returns a string (human) represntation of the address, including port
   std::string toStringWithPort() const
   {

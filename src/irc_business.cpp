@@ -13,12 +13,21 @@ void irc::business::MainLogic(irc::User *user){
             auto req = user->IRCRead();
             switch(req.op){
                 case irc::IRC_REQUEST_OP::QUIT:
+                    irc::business::Quit(user, req);
                     break;
                 case irc::IRC_REQUEST_OP::PRIVMSG:
                     irc::business::Chat(user, req);
                     break;
                 case irc::IRC_REQUEST_OP::MOTD:
                     irc::business::Motd(user, req);
+                    break;
+                case irc::IRC_REQUEST_OP::JOIN:
+                    irc::business::JoinChannel(user, req);
+                    break;
+                case irc::IRC_REQUEST_OP::PART:
+                    irc::business::PartChannel(user, req);
+                    break;
+                case irc::IRC_REQUEST_OP::USER:
                     break;
                 default:
                     UnknowResp(user, req);
@@ -149,6 +158,61 @@ void irc::business::Chat(irc::User *user, irc::IRCRequest &req) {
 
 }
 
+void irc::business::JoinChannel(irc::User *user, irc::IRCRequest &req)
+{
+    auto server = irc::Server::GetInstance();
+
+    auto char_channel_nick = req.cmds[1];
+
+    auto char_channel = server->ReadChannel(char_channel_nick);
+    if (char_channel == NULL) {
+        char_channel = new irc::Channel();
+        char_channel->name = char_channel_nick;
+        server->SetChannel(char_channel_nick, char_channel);
+    }
+    if(std::find(char_channel->users.begin(), char_channel->users.end(), user)==char_channel->users.end())
+        char_channel->users.push_back(user);
+
+    std::vector<std::string> args;
+
+    args.push_back(req.cmds[0]);
+    args.push_back(req.cmds[1]);
+    irc::IRCResponse resp_ack(
+        user->ircHost,
+        user->ircPort,
+        "",
+        args
+    );
+    char_channel->IRCBroadcast(resp_ack);
+
+    args.clear();
+    args.push_back(user->nickName);
+    args.push_back("=");
+    args.push_back(char_channel_nick);
+    args.push_back(":");
+    for(auto i:char_channel->users) {
+        args.push_back(i->nickName);
+    }
+    irc::IRCResponse resp_names_list(
+        user->ircHost,
+        user->ircPort,
+        irc::RESP_CODE::RPL_NAMREPLY,
+        args
+    );
+    user->IRCPushMessage(resp_names_list);
+
+    args.clear();
+    args.push_back(user->nickName);
+    args.push_back(char_channel_nick);
+    args.push_back(":End of NAMES list");
+    irc::IRCResponse resp_end_list(
+        user->ircHost,
+        user->ircPort,
+        irc::RESP_CODE::RPL_ENDOFNAMES,
+        args
+    );
+    user->IRCPushMessage(resp_end_list);
+}
 
 void irc::business::UnknowResp(irc::User *user, irc::IRCRequest &req){
     auto server = irc::Server::GetInstance();
@@ -164,7 +228,7 @@ void irc::business::UnknowResp(irc::User *user, irc::IRCRequest &req){
     user->IRCPushMessage(resp);
 }
 
-void UnKnowNickResp(irc::User *user, irc::IRCRequest &req){
+void irc::business::UnKnowNickResp(irc::User *user, irc::IRCRequest &req){
     auto server = irc::Server::GetInstance();
     auto args = std::vector<std::string>();
     args.push_back(req.cmds[1]);
@@ -179,6 +243,37 @@ void UnKnowNickResp(irc::User *user, irc::IRCRequest &req){
 };
 
 
-void Motd(irc::User *user , irc::IRCRequest &req) {
-    //
+void irc::business::Motd(irc::User *user , irc::IRCRequest &req) {
+    if(user->PushOfflineMessage() < 0)
+        UnknowResp(user, req);
+}
+
+void irc::business::PartChannel(irc::User *user, irc::IRCRequest &req)
+{
+    auto server = irc::Server::GetInstance();
+
+    auto char_channel_nick = req.cmds[1];
+
+    auto char_channel = server->ReadChannel(char_channel_nick);
+    if (char_channel == NULL) {
+        UnKnowNickResp(user, req);
+        return;
+    }
+    if(std::find(char_channel->users.begin(), char_channel->users.end(), user)==char_channel->users.end())
+        return;
+    std::vector<std::string> args(req.cmds);
+    irc::IRCResponse resp_ack(
+        user->ircHost,
+        user->ircPort,
+        "",
+        args
+    );
+    char_channel->IRCBroadcast(resp_ack);
+    char_channel->users.remove(user);
+}
+
+void irc::business::Quit(irc::User *user, irc::IRCRequest &req)
+{
+    auto server = irc::Server::GetInstance();
+    user->Logout();
 }
