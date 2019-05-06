@@ -3,7 +3,7 @@
 irc::Server* irc::Server::_server = NULL;
 irc::Server::Server()
 {
-    host = "127.0.0.1";
+    host = "0.0.0.0";
     port = "10086";
 }
 
