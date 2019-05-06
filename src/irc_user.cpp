@@ -75,4 +75,9 @@ namespace irc {
         }
         return msg_num;
     }
+
+    std::string irc::User::GetSrc()
+    {
+        return ircHost + ":" + ircPort;
+    }
 }
