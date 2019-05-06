@@ -31,6 +31,7 @@ namespace irc {
         irc::ERROR_NO Login(int _socket);
         irc::ERROR_NO Logout();
         int PushOfflineMessage();
+        std::string GetSrc();
     };
 }
 
