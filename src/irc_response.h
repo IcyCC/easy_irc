@@ -2,7 +2,6 @@
 
 #include<string>
 #include <vector>
-#include "irc_user.h"
 
 namespace irc {
     namespace RESP_CODE {
@@ -75,7 +74,7 @@ namespace irc {
         std::string code;
         std::vector<std::string> cmds;
     public:
-        IRCResponse(std::string& _src, const std::string& _code,  std::vector<std::string>& _cmds) {
+        IRCResponse(std::string _src, const std::string& _code,  std::vector<std::string>& _cmds) {
             src = _src;
             code = _code;
             for (auto &i : _cmds){

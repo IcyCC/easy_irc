@@ -49,7 +49,7 @@ irc::IRCRequest::IRCRequest(std::string& _raw) {
         }
 
         if (_in_msg ) {
-            _msg = _msg + c;
+            _msg = _msg + c+" ";
         } else {
             cmds.push_back(c);
         }

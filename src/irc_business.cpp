@@ -180,8 +180,7 @@ void irc::business::JoinChannel(irc::User *user, irc::IRCRequest &req)
     args.push_back(req.cmds[0]);
     args.push_back(req.cmds[1]);
     irc::IRCResponse resp_ack(
-        user->ircHost,
-        user->ircPort,
+        user->GetSrc(),
         "",
         args
     );
@@ -196,8 +195,7 @@ void irc::business::JoinChannel(irc::User *user, irc::IRCRequest &req)
         args.push_back(i->nickName);
     }
     irc::IRCResponse resp_names_list(
-        user->ircHost,
-        user->ircPort,
+        user->GetSrc(),
         irc::RESP_CODE::RPL_NAMREPLY,
         args
     );
@@ -206,10 +204,8 @@ void irc::business::JoinChannel(irc::User *user, irc::IRCRequest &req)
     args.clear();
     args.push_back(user->nickName);
     args.push_back(char_channel_nick);
-    args.push_back(":End of NAMES list");
     irc::IRCResponse resp_end_list(
-        user->ircHost,
-        user->ircPort,
+        user->GetSrc(),
         irc::RESP_CODE::RPL_ENDOFNAMES,
         args
     );
@@ -261,8 +257,7 @@ void irc::business::PartChannel(irc::User *user, irc::IRCRequest &req)
         return;
     std::vector<std::string> args(req.cmds);
     irc::IRCResponse resp_ack(
-        user->ircHost,
-        user->ircPort,
+        user->GetSrc(),
         "",
         args
     );
