@@ -90,13 +90,8 @@ namespace irc {
     public:
         irc::User *sender;
     public:
-        IRCUserResponse(std::string& _host, std::string& _port, irc::User * _user, const std::string& _code,  std::vector<std::string>& _cmds) {
-            src = ":"+ _host +":"+ _port;
+        IRCUserResponse(std::string& _host, std::string& _port, irc::User * _user, const std::string& _code,  std::vector<std::string>& _cmds) :IRCResponse(_host, _port, _code, _cmds){
             sender = _user;
-            code = _code;
-            for (auto &i : _cmds){
-                cmds.push_back(i);
-            }
         }
         std::string ToString();
     };
