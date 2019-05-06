@@ -30,6 +30,8 @@ void irc::business::MainLogic(int socketfd){
                 case irc::IRC_REQUEST_OP::PART:
                     irc::business::PartChannel(user, req);
                     break;
+                case irc::IRC_REQUEST_OP::NAMES:
+                    break;
                 case irc::IRC_REQUEST_OP::USER:
                     break;
                 default:
@@ -67,12 +69,9 @@ irc::User* irc::business::Login(int socketfd){
                 LogC("请求用户名 " + tmp_user_ptr->nickName + " 失败");
                 args.push_back(tmp_user_ptr->nickName);
                 args.push_back(nick);
-                args.push_back(":Nickname is already in use.");
-
                 auto resp = irc::IRCResponse(
-                        server->host,
-                        server->port,
-                        irc::RESP_CODE::RPL_WELCOME,
+                        server->GetSrc(),
+                        irc::RESP_CODE::ERR_ALREADYREGISTRED,
                         args
                 );
                 tmp_user.IRCPushMessage(resp);
@@ -101,11 +100,9 @@ irc::User* irc::business::Login(int socketfd){
     auto args = std::vector<std::string>();
 
     args.push_back(tmp_user_ptr->nickName);
-    args.push_back("Welcome to the Internet Relay Network borja!borja@polaris.cs.uchicago.edu");
 
     auto resp = irc::IRCResponse(
-        server->host,
-        server->port,
+        server->GetSrc(),
         irc::RESP_CODE::RPL_WELCOME,
         args 
     );
@@ -132,8 +129,7 @@ void irc::business::Chat(irc::User *user, irc::IRCRequest &req) {
             args.push_back(chat_channel->name);
             args.push_back(msg);
             auto resp = irc::IRCResponse(
-                    server->host,
-                    server->port,
+                    server->GetSrc(),
                     irc::RESP_CODE::RPL_WELCOME,
                     args
             );
@@ -153,8 +149,7 @@ void irc::business::Chat(irc::User *user, irc::IRCRequest &req) {
             args.push_back(char_user->nickName);
             args.push_back(msg);
             auto resp = irc::IRCResponse(
-                    server->host,
-                    server->port,
+                    server->GetSrc(),
                     irc::RESP_CODE::RPL_WELCOME,
                     args
             );
@@ -185,8 +180,7 @@ void irc::business::JoinChannel(irc::User *user, irc::IRCRequest &req)
     args.push_back(req.cmds[0]);
     args.push_back(req.cmds[1]);
     irc::IRCResponse resp_ack(
-        user->ircHost,
-        user->ircPort,
+        user->GetSrc(),
         "",
         args
     );
@@ -201,8 +195,7 @@ void irc::business::JoinChannel(irc::User *user, irc::IRCRequest &req)
         args.push_back(i->nickName);
     }
     irc::IRCResponse resp_names_list(
-        user->ircHost,
-        user->ircPort,
+        user->GetSrc(),
         irc::RESP_CODE::RPL_NAMREPLY,
         args
     );
@@ -211,10 +204,8 @@ void irc::business::JoinChannel(irc::User *user, irc::IRCRequest &req)
     args.clear();
     args.push_back(user->nickName);
     args.push_back(char_channel_nick);
-    args.push_back(":End of NAMES list");
     irc::IRCResponse resp_end_list(
-        user->ircHost,
-        user->ircPort,
+        user->GetSrc(),
         irc::RESP_CODE::RPL_ENDOFNAMES,
         args
     );
@@ -225,10 +216,8 @@ void irc::business::UnknowResp(irc::User *user, irc::IRCRequest &req){
     auto server = irc::Server::GetInstance();
     auto args = std::vector<std::string>();
     args.push_back(req.cmds[0]);
-    args.push_back(":Unknown command");
     auto resp = irc::IRCResponse(
-            server->host,
-            server->port,
+            server->GetSrc(),
             irc::RESP_CODE::ERR_UNKNOWNCOMMAND,
             args
     );
@@ -239,11 +228,9 @@ void irc::business::UnKnowNickResp(irc::User *user, irc::IRCRequest &req){
     auto server = irc::Server::GetInstance();
     auto args = std::vector<std::string>();
     args.push_back(req.cmds[1]);
-    args.push_back(":No such nick/channel");
     auto resp = irc::IRCResponse(
-            server->host,
-            server->port,
-            irc::RESP_CODE::RPL_WELCOME,
+          server->GetSrc(),
+            irc::RESP_CODE::ERR_NOSUCHNICK,
             args
     );
     user->IRCPushMessage(resp);
@@ -270,8 +257,7 @@ void irc::business::PartChannel(irc::User *user, irc::IRCRequest &req)
         return;
     std::vector<std::string> args(req.cmds);
     irc::IRCResponse resp_ack(
-        user->ircHost,
-        user->ircPort,
+        user->GetSrc(),
         "",
         args
     );
@@ -282,4 +268,11 @@ void irc::business::PartChannel(irc::User *user, irc::IRCRequest &req)
 void irc::business::Quit(irc::User *user, irc::IRCRequest &req)
 {
     user->Logout();
+}
+
+void NAMES(irc::User *user, irc::IRCRequest &req) {
+    if (req.cmds.size() == 1){
+        // 单个参数
+        
+    } 
 }
