@@ -100,16 +100,15 @@ void SWriten(int sockfd, const std::string& content)
 std::string SRead(int sockfd, std::string::size_type limit)
 {
   std::string ret;
-  char buffer[1024];
+  char buffer[2] = {0};
   std::string::size_type leftToRead=limit;
   for(; leftToRead;) {
-    auto chunk = sizeof(buffer) < leftToRead ? sizeof(buffer) : leftToRead;
-    int res = read(sockfd, buffer, chunk);
+    int res = read(sockfd, buffer, 1);
     if(res < 0)
       RuntimeError(strerror(errno));
     if(!res)
       RuntimeError(strerror(errno));
-    ret.append(buffer, res);
+    ret.append(buffer, 1);
     leftToRead -= res;
     if(IsEndWith(ret, "\r\n")){
       break;

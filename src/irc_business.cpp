@@ -87,6 +87,7 @@ irc::User* irc::business::Login(int socketfd){
         return NULL;
     }
 
+    req = tmp_user_ptr->IRCRead();
     while (req.op != irc::IRC_REQUEST_OP::USER) {
         req = tmp_user_ptr->IRCRead();
         UnknowResp(tmp_user_ptr, req);
