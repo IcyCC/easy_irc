@@ -5,7 +5,7 @@ irc::IRCRequest::IRCRequest(std::string& _raw) {
     raw = _raw;
     _raw.pop_back();
     _raw.pop_back();
-    _cmds = SpliteString(_raw, " ");
+    auto _cmds = SpliteString(_raw, " ");
     if (_cmds.size() < 1) {
         throw "错误的消息";
     }
@@ -33,6 +33,8 @@ irc::IRCRequest::IRCRequest(std::string& _raw) {
         op = irc::IRC_REQUEST_OP::JOIN;
     }  else if (_cmds[0] == "PART") {
         op = irc::IRC_REQUEST_OP::PART;
+    } else if (_cmds[0] == "NAMES"){
+        op = irc::IRC_REQUEST_OP::NAMES;
     } 
     else {
         op = irc::IRC_REQUEST_OP::UNKNOW;
@@ -47,7 +49,7 @@ irc::IRCRequest::IRCRequest(std::string& _raw) {
         }
 
         if (_in_msg ) {
-            _in_msg = _msg + c;
+            _msg = _msg + c;
         } else {
             cmds.push_back(c);
         }

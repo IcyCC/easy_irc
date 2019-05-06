@@ -30,6 +30,8 @@ void irc::business::MainLogic(int socketfd){
                 case irc::IRC_REQUEST_OP::PART:
                     irc::business::PartChannel(user, req);
                     break;
+                case irc::IRC_REQUEST_OP::NAMES:
+                    break;
                 case irc::IRC_REQUEST_OP::USER:
                     break;
                 default:
@@ -282,4 +284,11 @@ void irc::business::PartChannel(irc::User *user, irc::IRCRequest &req)
 void irc::business::Quit(irc::User *user, irc::IRCRequest &req)
 {
     user->Logout();
+}
+
+void NAMES(irc::User *user, irc::IRCRequest &req) {
+    if (req.cmds.size() == 1){
+        // 单个参数
+        
+    } 
 }

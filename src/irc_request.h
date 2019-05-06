@@ -17,7 +17,8 @@ namespace irc {
         WHOIS,
         JOIN,
         PART,
-        UNKNOW
+        UNKNOW,
+        NAMES
     };
     class IRCRequest {
 
