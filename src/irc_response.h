@@ -75,24 +75,14 @@ namespace irc {
         std::string code;
         std::vector<std::string> cmds;
     public:
-        IRCResponse(std::string& _host, std::string& _port, const std::string& _code,  std::vector<std::string>& _cmds) {
-            src = ":"+ _host +":"+ _port;
+        IRCResponse(std::string& _src, const std::string& _code,  std::vector<std::string>& _cmds) {
+            src = _src;
             code = _code;
             for (auto &i : _cmds){
                 cmds.push_back(i);
             }
         }
     public:
-        std::string ToString();
-    };
-
-    class IRCUserResponse :public IRCResponse {
-    public:
-        irc::User *sender;
-    public:
-        IRCUserResponse(std::string& _host, std::string& _port, irc::User * _user, const std::string& _code,  std::vector<std::string>& _cmds) :IRCResponse(_host, _port, _code, _cmds){
-            sender = _user;
-        }
         std::string ToString();
     };
 };
