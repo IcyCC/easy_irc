@@ -38,7 +38,7 @@ class Server
     static Server *GetInstance();
     Server();
     inline std::string GetSrc() {
-      return host + ":" + port;
+      return host + "#" + port;
     }
 };
 } // namespace irc

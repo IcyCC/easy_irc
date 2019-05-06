@@ -78,6 +78,6 @@ namespace irc {
 
     std::string irc::User::GetSrc()
     {
-        return ircHost + ":" + ircPort;
+        return ircHost + "#" + ircPort;
     }
 }

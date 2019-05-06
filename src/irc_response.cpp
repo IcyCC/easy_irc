@@ -68,10 +68,10 @@ const std::string irc::RESP_CODE::ERR_USERSDONTMATCH    = "502";
 
 std::string irc::IRCResponse::ToString() {
     std::string res;
-    res = src + " " + code + " ";
+    res = ":" + src + " " + code + " " + userName + " :";
     if(code == irc::RESP_CODE::RPL_WELCOME) {
-        res += "Welcome to the Internet Replay Network ";
-        res += cmds[0] + "!" + cmds[1] + "@" + cmds[1];
+        res += "Welcome to the Internet Relay Network ";
+        res += cmds[0] + "!" + cmds[1] + "@" + cmds[2];
     } else if(code == irc::RESP_CODE::RPL_YOURHOST) {
         res += "Your host is " + cmds[0] + ", running version 1";
     } else if(code == irc::RESP_CODE::RPL_CREATED) {
@@ -79,7 +79,7 @@ std::string irc::IRCResponse::ToString() {
     } else if(code == irc::RESP_CODE::RPL_MYINFO) {
         res += cmds[0];
     } else if(code == irc::RESP_CODE::RPL_LUSERCLIENT) {
-        res += ":There are " + cmds[0] + " users on server";
+        res += "There are " + cmds[0] + " users on server";
     } else if(code == irc::RESP_CODE::RPL_LUSEROP) {
         res += cmds[0] + " :operator(s) online";
     } else if(code == irc::RESP_CODE::RPL_LUSERUNKNOWN) {
@@ -87,19 +87,19 @@ std::string irc::IRCResponse::ToString() {
     } else if(code == irc::RESP_CODE::RPL_LUSERCHANNELS) {
         res += cmds[0] + " :channels formed";
     } else if(code == irc::RESP_CODE::RPL_LUSERME) {
-        res += ":I have " + cmds[0] + " clients";
+        res += "I have " + cmds[0] + " clients";
     } else if(code == irc::RESP_CODE::RPL_AWAY) {
         res += cmds[0] + " :" + cmds[1];
     } else if(code == irc::RESP_CODE::RPL_UNAWAY) {
-        res += ":You are no longer marked as being away";
+        res += "You are no longer marked as being away";
     } else if(code == irc::RESP_CODE::RPL_NOWAWAY) {
-        res += ":You have been marked as being away";
+        res += "You have been marked as being away";
     } else if(code == irc::RESP_CODE::RPL_WHOISUSER) {  
         res += cmds[0] + " " + cmds[1] + " " + cmds[2] + " :" + cmds[3];
     } else if(code == irc::RESP_CODE::RPL_WHOISSERVER) {
         res += "Server: " + src;
     } else if(code == irc::RESP_CODE::RPL_WHOISOPERATOR) {
-        res += "Admin :is an IRC operator";
+        res += "is an IRC operator";
     } else if(code == irc::RESP_CODE::RPL_WHOISIDLE) {
         res += cmds[0] + " " + cmds[1] + ":seconds idle";
     } else if(code == irc::RESP_CODE::RPL_ENDOFWHOIS) {
@@ -113,7 +113,7 @@ std::string irc::IRCResponse::ToString() {
     } else if(code == irc::RESP_CODE::RPL_LIST) {
         res += cmds[0] + " :" + cmds[1];
     } else if(code == irc::RESP_CODE::RPL_LISTEND) {
-        res += ":End of LIST";
+        res += "End of LIST";
     } else if(code == irc::RESP_CODE::RPL_CHANNELMODEIS) {
         res += cmds[0] + " " + cmds[1] + " " + cmds[2];
     } else if(code == irc::RESP_CODE::RPL_NOTOPIC) {
@@ -127,13 +127,13 @@ std::string irc::IRCResponse::ToString() {
     } else if(code == irc::RESP_CODE::RPL_ENDOFNAMES) {
         res += cmds[0] + " :End of NAMES list";
     } else if(code == irc::RESP_CODE::RPL_MOTDSTART) {
-        res += ":- Offline Message -";
+        res += "- Offline Message -";
     } else if(code == irc::RESP_CODE::RPL_MOTD) {
-        res += ":- " + cmds[0];
+        res += "- " + cmds[0];
     } else if(code == irc::RESP_CODE::RPL_ENDOFMOTD) {
-        res += ":End of MOTD command";
+        res += "End of MOTD command";
     } else if(code == irc::RESP_CODE::RPL_YOUREOPER) {
-        res += ":You are now an IRC operator";
+        res += "You are now an IRC operator";
     } else if(code == irc::RESP_CODE::ERR_NOSUCHNICK) {
         res += cmds[0] + " :No such nick/channel";
     } else if(code == irc::RESP_CODE::ERR_NOSUCHCHANNEL) {
@@ -141,15 +141,15 @@ std::string irc::IRCResponse::ToString() {
     } else if(code == irc::RESP_CODE::ERR_CANNOTSENDTOCHAN) {
         res += cmds[0] + " :Cannot send to channel";
     } else if(code == irc::RESP_CODE::ERR_NORECIPIENT) {
-        res += ":No recipient given (" + cmds[0] + ")";
+        res += "No recipient given (" + cmds[0] + ")";
     } else if(code == irc::RESP_CODE::ERR_NOTEXTTOSEND) {
-        res += ":No text to send";
+        res += "No text to send";
     } else if(code == irc::RESP_CODE::ERR_UNKNOWNCOMMAND) {
         res += cmds[0] + " :Unknown command";
     } else if(code == irc::RESP_CODE::ERR_NOMOTD) {
-        res += ":MOTD File is missing";
+        res += "MOTD File is missing";
     } else if(code == irc::RESP_CODE::ERR_NONICKNAMEGIVEN) {
-        res += ":No nickname given";
+        res += "No nickname given";
     } else if(code == irc::RESP_CODE::ERR_NICKNAMEINUSE) {
         res += cmds[0] = " :Nickname is already in use";
     } else if(code == irc::RESP_CODE::ERR_USERNOTINCHANNEL) {
@@ -157,23 +157,25 @@ std::string irc::IRCResponse::ToString() {
     } else if(code == irc::RESP_CODE::ERR_NOTONCHANNEL) {
         res += cmds[0] + " :You're not on that channel";
     } else if(code == irc::RESP_CODE::ERR_NOTREGISTERED) {
-        res += ":You have not registered";
+        res += "You have not registered";
     } else if(code == irc::RESP_CODE::ERR_NEEDMOREPARAMS) {
         res += cmds[0] + " :Not enough parameters";
     } else if(code == irc::RESP_CODE::ERR_ALREADYREGISTRED) {
-        res += ":Unauthorized command (already registered)";
+        res += "Unauthorized command (already registered)";
     } else if(code == irc::RESP_CODE::ERR_PASSWDMISMATCH) {
-        res += ":Password incorrect";
+        res += "Password incorrect";
     } else if(code == irc::RESP_CODE::ERR_UNKNOWNMODE) {
         res += cmds[0] + " :is unknown mode char to me for " + cmds[1];
     } else if(code == irc::RESP_CODE::ERR_CHANOPRIVSNEEDED) {
         res += cmds[0] + " :You're not channel operator";
     } else if(code == irc::RESP_CODE::ERR_UMODEUNKNOWNFLAG) {
-        res += ":Unknown MODE flag";
+        res += "Unknown MODE flag";
     } else if(code == irc::RESP_CODE::ERR_USERSDONTMATCH) {
-        res += ":Cannot change mode for other users";
+        res += "Cannot change mode for other users";
     } else {
-        res += "Unkowns message type";
+        for(auto i:cmds) {
+            res += i + " ";
+        }
     }
     res += "\r\n";
     return res;
