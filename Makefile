@@ -63,3 +63,7 @@ clean:
 distclean:
 	@echo CLEAN $(CLEAN_LIST)
 	@rm -f $(DISTCLEAN_LIST)
+
+.PHONY: tests
+tests:
+	python3 -m pytest tests/ --chirc-exe=bin/tuling --chirc-port=10086 --json=tests/report.json --html=tests/report.html
