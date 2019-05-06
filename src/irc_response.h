@@ -72,10 +72,12 @@ namespace irc {
     public:
         std::string src;
         std::string code;
+        std::string userName;
         std::vector<std::string> cmds;
     public:
-        IRCResponse(std::string _src, const std::string& _code,  std::vector<std::string>& _cmds) {
+        IRCResponse(std::string _src, const std::string& _code, std::string& _userName, std::vector<std::string>& _cmds) {
             src = _src;
+            userName = _userName;
             code = _code;
             for (auto &i : _cmds){
                 cmds.push_back(i);

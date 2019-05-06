@@ -31,6 +31,7 @@ void irc::business::MainLogic(int socketfd){
                     irc::business::PartChannel(user, req);
                     break;
                 case irc::IRC_REQUEST_OP::NAMES:
+                    irc::business::NAMES(user, req);
                     break;
                 case irc::IRC_REQUEST_OP::USER:
                     break;
@@ -72,6 +73,54 @@ irc::User* irc::business::Login(int socketfd){
                 auto resp = irc::IRCResponse(
                         server->GetSrc(),
                         irc::RESP_CODE::ERR_ALREADYREGISTRED,
+                        tmp_user_ptr->nickName,
+                        args
+                );
+                tmp_user.IRCPushMessage(resp);
+                return NULL;
+            } else {
+                //  该账户重新上线
+                u->Login(tmp_user.socket);
+                tmp_user_ptr = u;
+            }
+        }
+        req = tmp_user_ptr->IRCRead();
+        while (req.op != irc::IRC_REQUEST_OP::USER) {
+            req = tmp_user_ptr->IRCRead();
+            UnknowResp(tmp_user_ptr, req);
+        }
+
+        tmp_user_ptr->userName = req.cmds[1];
+        tmp_user_ptr->state = true;
+        server->SetUser(tmp_user_ptr->nickName, tmp_user_ptr);
+        LogC("请求名字 " + tmp_user_ptr->userName + " 成功");
+    } else if(req.op == irc::IRC_REQUEST_OP::USER) {
+        auto user_name = req.cmds[1];
+        req = tmp_user_ptr->IRCRead();
+        while (req.op != irc::IRC_REQUEST_OP::NICK) {
+            req = tmp_user_ptr->IRCRead();
+            UnknowResp(tmp_user_ptr, req);
+        }
+        auto nick = req.cmds[1];
+        auto u = server->ReadUser(nick);
+        if (u == NULL ){
+            tmp_user_ptr = new User();
+            tmp_user_ptr->Login(socketfd);
+            tmp_user_ptr->nickName = req.cmds[1];
+            tmp_user_ptr->userName = user_name;
+            LogC("请求用户名 " + tmp_user_ptr->nickName + " 获取成功");
+        } else {
+            // 用户名已经被使用
+            if (u->state){
+                // 别的用户登录中 无法拿到该会话
+                auto args = std::vector<std::string>();
+                LogC("请求用户名 " + tmp_user_ptr->nickName + " 失败");
+                args.push_back(tmp_user_ptr->nickName);
+                args.push_back(nick);
+                auto resp = irc::IRCResponse(
+                        server->GetSrc(),
+                        irc::RESP_CODE::ERR_ALREADYREGISTRED,
+                        tmp_user_ptr->nickName,
                         args
                 );
                 tmp_user.IRCPushMessage(resp);
@@ -87,24 +136,18 @@ irc::User* irc::business::Login(int socketfd){
         return NULL;
     }
 
-    req = tmp_user_ptr->IRCRead();
-    while (req.op != irc::IRC_REQUEST_OP::USER) {
-        req = tmp_user_ptr->IRCRead();
-        UnknowResp(tmp_user_ptr, req);
-    }
-
-    tmp_user_ptr->userName = req.cmds[1];
-    tmp_user_ptr->state = true;
-    server->SetUser(tmp_user_ptr->nickName, tmp_user_ptr);
-    LogC("请求名字 " + tmp_user_ptr->userName + " 成功");
+    
 
     auto args = std::vector<std::string>();
 
     args.push_back(tmp_user_ptr->nickName);
+    args.push_back(tmp_user_ptr->userName);
+    args.push_back(tmp_user_ptr->ircHost);
 
     auto resp = irc::IRCResponse(
         server->GetSrc(),
         irc::RESP_CODE::RPL_WELCOME,
+        tmp_user_ptr->nickName,
         args 
     );
 
@@ -132,6 +175,7 @@ void irc::business::Chat(irc::User *user, irc::IRCRequest &req) {
             auto resp = irc::IRCResponse(
                     server->GetSrc(),
                     irc::RESP_CODE::RPL_WELCOME,
+                    user->nickName,
                     args
             );
             chat_channel->IRCBroadcast(resp);
@@ -152,6 +196,7 @@ void irc::business::Chat(irc::User *user, irc::IRCRequest &req) {
             auto resp = irc::IRCResponse(
                     server->GetSrc(),
                     irc::RESP_CODE::RPL_WELCOME,
+                    user->nickName,
                     args
             );
             char_user->IRCPushMessage(resp);
@@ -183,6 +228,7 @@ void irc::business::JoinChannel(irc::User *user, irc::IRCRequest &req)
     irc::IRCResponse resp_ack(
         user->GetSrc(),
         "",
+        user->nickName,
         args
     );
     char_channel->IRCBroadcast(resp_ack);
@@ -198,6 +244,7 @@ void irc::business::JoinChannel(irc::User *user, irc::IRCRequest &req)
     irc::IRCResponse resp_names_list(
         user->GetSrc(),
         irc::RESP_CODE::RPL_NAMREPLY,
+        user->nickName,
         args
     );
     user->IRCPushMessage(resp_names_list);
@@ -208,6 +255,7 @@ void irc::business::JoinChannel(irc::User *user, irc::IRCRequest &req)
     irc::IRCResponse resp_end_list(
         user->GetSrc(),
         irc::RESP_CODE::RPL_ENDOFNAMES,
+        user->nickName,
         args
     );
     user->IRCPushMessage(resp_end_list);
@@ -220,6 +268,7 @@ void irc::business::UnknowResp(irc::User *user, irc::IRCRequest &req){
     auto resp = irc::IRCResponse(
             server->GetSrc(),
             irc::RESP_CODE::ERR_UNKNOWNCOMMAND,
+            user->nickName,
             args
     );
     user->IRCPushMessage(resp);
@@ -232,6 +281,7 @@ void irc::business::UnKnowNickResp(irc::User *user, irc::IRCRequest &req){
     auto resp = irc::IRCResponse(
           server->GetSrc(),
             irc::RESP_CODE::ERR_NOSUCHNICK,
+            user->nickName,
             args
     );
     user->IRCPushMessage(resp);
@@ -260,6 +310,7 @@ void irc::business::PartChannel(irc::User *user, irc::IRCRequest &req)
     irc::IRCResponse resp_ack(
         user->GetSrc(),
         "",
+        user->nickName,
         args
     );
     char_channel->IRCBroadcast(resp_ack);
@@ -271,9 +322,47 @@ void irc::business::Quit(irc::User *user, irc::IRCRequest &req)
     user->Logout();
 }
 
-void NAMES(irc::User *user, irc::IRCRequest &req) {
-    if (req.cmds.size() == 1){
-        // 单个参数
-        
-    } 
+void irc::business::NAMES(irc::User *user, irc::IRCRequest &req) {
+    auto server = irc::Server::GetInstance();
+    if (req.cmds.size() == 2){
+        for(auto channel : server->ChannelMap) {
+            std::vector<std::string> args;
+            args.push_back(channel.first);
+            for(auto _user : channel.second->users) {
+                args.push_back(_user->nickName);
+            }
+            irc::IRCResponse msg(
+                server->GetSrc(),
+                irc::RESP_CODE::RPL_NAMREPLY,
+                user->nickName,
+                args
+            );
+            user->IRCPushMessage(msg);
+        }
+    } else if (req.cmds.size() == 3) {
+
+        auto char_channel_nick = req.cmds[1];
+
+        auto char_channel = server->ReadChannel(char_channel_nick);
+        if (char_channel == NULL) {
+            UnKnowNickResp(user, req);
+            return;
+        }
+        std::vector<std::string> args;
+        args.push_back(char_channel->name);
+        for(auto _user : char_channel->users) {
+            args.push_back(_user->nickName);
+        }
+        irc::IRCResponse msg(
+            server->GetSrc(),
+            irc::RESP_CODE::RPL_NAMREPLY,
+            user->nickName,
+            args
+        );
+        user->IRCPushMessage(msg);
+
+    } else {
+        UnknowResp(user, req);
+    }
+    
 }
