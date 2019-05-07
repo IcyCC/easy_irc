@@ -37,7 +37,7 @@ namespace irc {
     irc::ERROR_NO User::Logout()
     {
         if(socket > 0)
-            close(socket);
+            shutdown(socket, SHUT_RDWR);
         this->socket = -1;
         this->state = false;
         return SUCCESS;
@@ -78,6 +78,6 @@ namespace irc {
 
     std::string irc::User::GetSrc()
     {
-        return ircHost + "#" + ircPort;
+        return nickName + "!" + userName + "@" + ircHost;
     }
 }

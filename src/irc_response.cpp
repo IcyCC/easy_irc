@@ -80,7 +80,7 @@ std::string irc::IRCResponse::ToString() {
         res = ":" + src + " " + code + " " + userName + " ";
         res += cmds[0] + " 1.0 * *";
     } else if(code == irc::RESP_CODE::RPL_LUSERCLIENT) {
-        res += "There are " + cmds[0] + " users on server and 0 services on 1 servers";
+        res += "There are " + cmds[0] + " users and 0 services on 1 servers";
     } else if(code == irc::RESP_CODE::RPL_LUSEROP) {
         res = ":" + src + " " + code + " " + userName + " ";
         res += cmds[0] + " :operator(s) online";
@@ -91,7 +91,7 @@ std::string irc::IRCResponse::ToString() {
         res = ":" + src + " " + code + " " + userName + " ";
         res += cmds[0] + " :channels formed";
     } else if(code == irc::RESP_CODE::RPL_LUSERME) {
-        res += "I have " + cmds[0] + " clients";
+        res += "I have " + cmds[0] + " clients and 0 servers";
     } else if(code == irc::RESP_CODE::RPL_AWAY) {
         res += cmds[0] + " :" + cmds[1];
     } else if(code == irc::RESP_CODE::RPL_UNAWAY) {
@@ -125,10 +125,12 @@ std::string irc::IRCResponse::ToString() {
     } else if(code == irc::RESP_CODE::RPL_TOPIC) {
         res += cmds[0] + " :" + cmds[1];
     } else if(code == irc::RESP_CODE::RPL_NAMREPLY) {
-        res += cmds[0] + " :";
+        res = ":" + src + " " + code + " " + userName + " ";
+        res += "= " + cmds[0] + " :";
         for(int i = 1; i < cmds.size(); i++)
-            res += cmds[i] + " "; 
+            res += "=" + cmds[i] + " "; 
     } else if(code == irc::RESP_CODE::RPL_ENDOFNAMES) {
+        res = ":" + src + " " + code + " " + userName + " ";
         res += cmds[0] + " :End of NAMES list";
     } else if(code == irc::RESP_CODE::RPL_MOTDSTART) {
         res += "- Offline Message -";
@@ -139,8 +141,10 @@ std::string irc::IRCResponse::ToString() {
     } else if(code == irc::RESP_CODE::RPL_YOUREOPER) {
         res += "You are now an IRC operator";
     } else if(code == irc::RESP_CODE::ERR_NOSUCHNICK) {
+        res = ":" + src + " " + code + " " + userName + " ";
         res += cmds[0] + " :No such nick/channel";
     } else if(code == irc::RESP_CODE::ERR_NOSUCHCHANNEL) {
+        res = ":" + src + " " + code + " " + userName + " ";
         res += cmds[0] + " :No such channel";
     } else if(code == irc::RESP_CODE::ERR_CANNOTSENDTOCHAN) {
         res += cmds[0] + " :Cannot send to channel";
@@ -155,7 +159,8 @@ std::string irc::IRCResponse::ToString() {
     } else if(code == irc::RESP_CODE::ERR_NONICKNAMEGIVEN) {
         res += "No nickname given";
     } else if(code == irc::RESP_CODE::ERR_NICKNAMEINUSE) {
-        res += cmds[0] = " :Nickname is already in use";
+        res = ":" + src + " " + code + " " + userName + " ";
+        res += cmds[0] + " :Nickname is already in use";
     } else if(code == irc::RESP_CODE::ERR_USERNOTINCHANNEL) {
         res += cmds[0] + " " + cmds[1] + " :They aren't on that channel";
     } else if(code == irc::RESP_CODE::ERR_NOTONCHANNEL) {
@@ -178,8 +183,9 @@ std::string irc::IRCResponse::ToString() {
     } else if(code == irc::RESP_CODE::ERR_USERSDONTMATCH) {
         res += "Cannot change mode for other users";
     } else {
+        res = ":" + src;
         for(auto i:cmds) {
-            res += i + " ";
+            res += " " + i;
         }
     }
     res += "\r\n";

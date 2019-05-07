@@ -5,6 +5,7 @@ irc::Server::Server()
 {
     host = "0.0.0.0";
     port = "10086";
+    unknowns = 0;
 }
 
 irc::Server *irc::Server::GetInstance()
@@ -70,7 +71,17 @@ void irc::Server::RunServe()
     while (client_fd = SAccept(server_fd, client_addr))
     {
         LogC("收到链接请求");
+        g_lock.lock();
+        this->unknowns++;
+        g_lock.unlock();
         std::thread t(irc::business::MainLogic, client_fd);
         t.detach();
     }
+}
+
+void irc::Server::ReduceUnknown()
+{
+    g_lock.lock();
+    this->unknowns--;
+    g_lock.unlock();
 }
