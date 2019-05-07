@@ -22,6 +22,7 @@ namespace irc {
         void Motd(irc::User *user , irc::IRCRequest &req);
         void Quit(irc::User *user , irc::IRCRequest &req);
         void NAMES(irc::User *user, irc::IRCRequest &req);
+        void Lusers(irc::User *user, irc::IRCRequest &req);
         // 错误响应
         void UnknowResp(irc::User *user, irc::IRCRequest &req);
         void UnKnowNickResp(irc::User *user, irc::IRCRequest &req);

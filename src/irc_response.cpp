@@ -73,18 +73,22 @@ std::string irc::IRCResponse::ToString() {
         res += "Welcome to the Internet Relay Network ";
         res += cmds[0] + "!" + cmds[1] + "@" + cmds[2];
     } else if(code == irc::RESP_CODE::RPL_YOURHOST) {
-        res += "Your host is " + cmds[0] + ", running version 1";
+        res += "Your host is " + cmds[0] + ", running version 1.0";
     } else if(code == irc::RESP_CODE::RPL_CREATED) {
         res += "This server was created 2019-5-5";
     } else if(code == irc::RESP_CODE::RPL_MYINFO) {
-        res += cmds[0];
+        res = ":" + src + " " + code + " " + userName + " ";
+        res += cmds[0] + " 1.0 * *";
     } else if(code == irc::RESP_CODE::RPL_LUSERCLIENT) {
-        res += "There are " + cmds[0] + " users on server";
+        res += "There are " + cmds[0] + " users on server and 0 services on 1 servers";
     } else if(code == irc::RESP_CODE::RPL_LUSEROP) {
+        res = ":" + src + " " + code + " " + userName + " ";
         res += cmds[0] + " :operator(s) online";
     } else if(code == irc::RESP_CODE::RPL_LUSERUNKNOWN) {
+        res = ":" + src + " " + code + " " + userName + " ";
         res += cmds[0] + " :unknown connection(s)";
     } else if(code == irc::RESP_CODE::RPL_LUSERCHANNELS) {
+        res = ":" + src + " " + code + " " + userName + " ";
         res += cmds[0] + " :channels formed";
     } else if(code == irc::RESP_CODE::RPL_LUSERME) {
         res += "I have " + cmds[0] + " clients";
@@ -128,7 +132,7 @@ std::string irc::IRCResponse::ToString() {
         res += cmds[0] + " :End of NAMES list";
     } else if(code == irc::RESP_CODE::RPL_MOTDSTART) {
         res += "- Offline Message -";
-    } else if(code == irc::RESP_CODE::RPL_MOTD) {
+    } else if(code == irc::RESP_CODE::RPL_MOTD) { //
         res += "- " + cmds[0];
     } else if(code == irc::RESP_CODE::RPL_ENDOFMOTD) {
         res += "End of MOTD command";
@@ -159,6 +163,7 @@ std::string irc::IRCResponse::ToString() {
     } else if(code == irc::RESP_CODE::ERR_NOTREGISTERED) {
         res += "You have not registered";
     } else if(code == irc::RESP_CODE::ERR_NEEDMOREPARAMS) {
+        res = ":" + src + " " + code + " " + userName + " ";
         res += cmds[0] + " :Not enough parameters";
     } else if(code == irc::RESP_CODE::ERR_ALREADYREGISTRED) {
         res += "Unauthorized command (already registered)";

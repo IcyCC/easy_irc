@@ -54,7 +54,8 @@ irc::IRCRequest::IRCRequest(std::string& _raw) {
             cmds.push_back(c);
         }
     }
-    cmds.push_back(_msg);
+    if(!_msg.empty())
+        cmds.push_back(_msg);
 }
 
 std::string irc::IRCRequest::ToString() {
