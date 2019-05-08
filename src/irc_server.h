@@ -22,6 +22,7 @@ class Server
   public:
     std::string host;
     std::string port;
+    int unknowns;
 
   public:
     std::map<std::string, irc::Channel *> ChannelMap;
@@ -40,5 +41,6 @@ class Server
     inline std::string GetSrc() {
       return host + "#" + port;
     }
+    void ReduceUnknown();
 };
 } // namespace irc

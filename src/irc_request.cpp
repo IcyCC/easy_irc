@@ -7,7 +7,8 @@ irc::IRCRequest::IRCRequest(std::string& _raw) {
     _raw.pop_back();
     auto _cmds = SpliteString(_raw, " ");
     if (_cmds.size() < 1) {
-        throw "错误的消息";
+        op = irc::IRC_REQUEST_OP::OTHER;
+        return;
     }
     if (_cmds[0] == "NICK") {
         op = irc::IRC_REQUEST_OP::NICK;
@@ -54,7 +55,8 @@ irc::IRCRequest::IRCRequest(std::string& _raw) {
             cmds.push_back(c);
         }
     }
-    cmds.push_back(_msg);
+    if(!_msg.empty())
+        cmds.push_back(_msg);
 }
 
 std::string irc::IRCRequest::ToString() {

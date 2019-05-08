@@ -16,12 +16,28 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#include<stdio.h>
+#include <stdio.h>
+#include <algorithm>
 
 #define MAX_PATH_LEN 100
 #define ACCESS(fileName,accessMode) access(fileName,accessMode)
 #define MKDIR(path) mkdir(path,755)
 
+// trim from start 
+inline std::string &ltrim(std::string &s) { 
+    s.erase(s.begin(), std::find_if(s.begin(), s.end(), std::not1(std::ptr_fun<int, int>(std::isspace)))); 
+    return s; 
+} 
+
+// trim from end 
+inline std::string &rtrim(std::string &s) { 
+    s.erase(std::find_if(s.rbegin(), s.rend(), std::not1(std::ptr_fun<int, int>(std::isspace))).base(), s.end()); 
+    return s; 
+} 
+
+inline std::string &trim(std::string &s) { 
+    return ltrim(rtrim(s)); 
+} 
 
 inline std::vector<std::string> SpliteString(std::string src, std::string sp) {
     // 分割字符串
@@ -30,13 +46,20 @@ inline std::vector<std::string> SpliteString(std::string src, std::string sp) {
     pos2 = src.find(sp);
     pos1 = 0;
     while (std::string::npos != pos2) {
-        v.push_back(src.substr(pos1, pos2 - pos1));
+        std::string tmp = src.substr(pos1, pos2 - pos1);
+
+        tmp = trim(tmp);
+        if(!tmp.empty())
+            v.push_back(trim(tmp));
 
         pos1 = pos2 + sp.size();
         pos2 = src.find(sp, pos1);
     }
     if (pos1 != src.length()) {
-        v.push_back(src.substr(pos1));
+        std::string tmp = src.substr(pos1);
+        tmp = trim(tmp);
+        if(!tmp.empty())
+            v.push_back(trim(tmp));
     }
     return v;
 };

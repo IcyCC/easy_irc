@@ -3,6 +3,7 @@
 #include<string>
 #include<unistd.h>
 #include<queue>
+#include<fstream>
 #include"irc_error.h"
 #include"irc_response.h"
 #include"irc_request.h"
@@ -18,6 +19,7 @@ namespace irc {
         std::string ircPort;
         std::string nickName;
         std::string userName;
+        std::string realName;
         bool state;         //false 离线，true在线
         irc::UserSession session;
         std::queue<irc::IRCResponse> mesgQueue;
@@ -30,7 +32,7 @@ namespace irc {
         irc::IRCRequest IRCRead(); // 读取请求
         irc::ERROR_NO Login(int _socket);
         irc::ERROR_NO Logout();
-        int PushOfflineMessage();
+        std::vector<std::string> PushOfflineMessage();
         std::string GetSrc();
     };
 }

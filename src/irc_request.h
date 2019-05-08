@@ -18,7 +18,8 @@ namespace irc {
         JOIN,
         PART,
         UNKNOW,
-        NAMES
+        NAMES,
+        OTHER
     };
     class IRCRequest {
 
