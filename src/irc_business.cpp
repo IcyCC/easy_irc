@@ -39,12 +39,20 @@ void irc::business::MainLogic(int socketfd){
                 case irc::IRC_REQUEST_OP::PING:
                     irc::business::Ping(user, req);
                     break;
+                case irc::IRC_REQUEST_OP::LUSERS:
+                    irc::business::Lusers(user, req);
+                    break;
+                case irc::IRC_REQUEST_OP::WHOIS:
+                    irc::business::Whois(user, req);
+                    break;
                 case irc::IRC_REQUEST_OP::PONG:
                     break;
                 case irc::IRC_REQUEST_OP::USER:
                     break;
-                default:
+                case irc::IRC_REQUEST_OP::UNKNOW:
                     UnknowResp(user, req);
+                    break;
+                default:
                     break;
             }
         }
@@ -131,7 +139,7 @@ irc::User* irc::business::Login(int socketfd){
             } else if(req.op == irc::IRC_REQUEST_OP::NICK) {
                 tmp_user_ptr->state = false;
                 goto GET_NICK;
-            } else if(req.op == irc::IRC_REQUEST_OP::UNKNOW) {
+            } else if(req.op == irc::IRC_REQUEST_OP::UNKNOW || req.op == irc::IRC_REQUEST_OP::OTHER) {
                 continue;
             } else {
                 auto args = std::vector<std::string>();
@@ -179,7 +187,7 @@ irc::User* irc::business::Login(int socketfd){
                     args 
                 );
                 tmp_user_ptr->IRCPushMessage(resp);
-            } else if(req.op == irc::IRC_REQUEST_OP::UNKNOW ){
+            } else if(req.op == irc::IRC_REQUEST_OP::UNKNOW || req.op == irc::IRC_REQUEST_OP::OTHER){
                 
             } else {
                 auto args = std::vector<std::string>();
@@ -226,7 +234,7 @@ irc::User* irc::business::Login(int socketfd){
         }
         server->SetUser(tmp_user_ptr->nickName, tmp_user_ptr);
         server->ReduceUnknown();
-    } else if(req.op == irc::IRC_REQUEST_OP::UNKNOW) {
+    } else if(req.op == irc::IRC_REQUEST_OP::UNKNOW || req.op == irc::IRC_REQUEST_OP::OTHER) {
         return NULL;
     } else {
         auto args = std::vector<std::string>();
@@ -359,10 +367,10 @@ void irc::business::Chat(irc::User *user, irc::IRCRequest &req) {
             } else {
                 auto args = std::vector<std::string>();
                 args.push_back("PRIVMSG");
-                args.push_back(user->userName);
+                args.push_back(chat_channel->name);
                 args.push_back(msg.substr(0, msg.size()-1));
                 auto resp = irc::IRCResponse(
-                        server->GetSrc(),
+                        user->GetSrc(),
                         "",
                         user->nickName,
                         args
@@ -500,7 +508,10 @@ void irc::business::UnKnowNickResp(irc::User *user, irc::IRCRequest &req){
 
 void irc::business::Motd(irc::User *user , irc::IRCRequest &req) {
     auto server = irc::Server::GetInstance();
-    if(user->PushOfflineMessage() <= 0) {
+    std::vector<std::string> msgs;
+    try {
+        msgs = user->PushOfflineMessage();
+    } catch (std::exception e) {
         auto args = std::vector<std::string>();
         auto resp = irc::IRCResponse(
             server->GetSrc(),
@@ -509,6 +520,55 @@ void irc::business::Motd(irc::User *user , irc::IRCRequest &req) {
                 args
         );
         user->IRCPushMessage(resp);
+        LogC("NO motd file");
+        return;
+    }
+
+    if(msgs.empty()) {
+        auto args = std::vector<std::string>();
+        auto resp = irc::IRCResponse(
+            server->GetSrc(),
+                irc::RESP_CODE::ERR_NOMOTD,
+                user->nickName,
+                args
+        );
+        user->IRCPushMessage(resp);
+        LogC("no motd");
+    } else {
+        // RPL_MOTDSTART
+        auto args = std::vector<std::string>();
+        auto resp = irc::IRCResponse(
+            server->GetSrc(),
+                irc::RESP_CODE::RPL_MOTDSTART,
+                user->nickName,
+                args
+        );
+        user->IRCPushMessage(resp);
+        LogC("start motd");
+
+        for(auto msg:msgs) {
+            auto args = std::vector<std::string>();
+            args.push_back(msg);
+            auto resp = irc::IRCResponse(
+                server->GetSrc(),
+                    irc::RESP_CODE::RPL_MOTD,
+                    user->nickName,
+                    args
+            );
+            user->IRCPushMessage(resp);
+            LogC("motd");
+        }
+
+        args.clear();
+        // RPL_ENDOFMOTD
+        resp = irc::IRCResponse(
+            server->GetSrc(),
+            irc::RESP_CODE::RPL_ENDOFMOTD,
+            user->nickName,
+            args
+        );
+        user->IRCPushMessage(resp);
+        LogC("end motd");
     }
 }
 
@@ -760,4 +820,9 @@ void irc::business::Ping(irc::User *user, irc::IRCRequest &req)
         args
     );
     user->IRCPushMessage(resp);
+}
+
+void irc::business::Whois(irc::User *user, irc::IRCRequest &req)
+{
+
 }

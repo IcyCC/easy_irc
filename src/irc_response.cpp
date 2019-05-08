@@ -133,7 +133,7 @@ std::string irc::IRCResponse::ToString() {
         res = ":" + src + " " + code + " " + userName + " ";
         res += cmds[0] + " :End of NAMES list";
     } else if(code == irc::RESP_CODE::RPL_MOTDSTART) {
-        res += "- Offline Message -";
+        res += "- " + userName +" Message of the day - ";
     } else if(code == irc::RESP_CODE::RPL_MOTD) { //
         res += "- " + cmds[0];
     } else if(code == irc::RESP_CODE::RPL_ENDOFMOTD) {
@@ -153,6 +153,7 @@ std::string irc::IRCResponse::ToString() {
     } else if(code == irc::RESP_CODE::ERR_NOTEXTTOSEND) {
         res += "No text to send";
     } else if(code == irc::RESP_CODE::ERR_UNKNOWNCOMMAND) {
+        res = ":" + src + " " + code + " " + userName + " ";
         res += cmds[0] + " :Unknown command";
     } else if(code == irc::RESP_CODE::ERR_NOMOTD) {
         res += "MOTD File is missing";
@@ -187,6 +188,9 @@ std::string irc::IRCResponse::ToString() {
         for(auto i:cmds) {
             res += " " + i;
         }
+    }
+    if(res.size() > 510) {
+        res = res.substr(0, 510);
     }
     res += "\r\n";
     return res;

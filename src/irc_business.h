@@ -25,6 +25,7 @@ namespace irc {
         void Lusers(irc::User *user, irc::IRCRequest &req);
         void Notice(irc::User *user, irc::IRCRequest &req);
         void Ping(irc::User *user, irc::IRCRequest &req);
+        void Whois(irc::User *user, irc::IRCRequest &req);
         // 错误响应
         void UnknowResp(irc::User *user, irc::IRCRequest &req);
         void UnKnowNickResp(irc::User *user, irc::IRCRequest &req);

@@ -7,6 +7,7 @@ namespace irc {
     {
         this->nickName = irc::ANONYMOUS;
         this->userName = irc::ANONYMOUS;
+        this->realName = irc::ANONYMOUS;
         this->state = false;
         this->session.state = IDLE;
         this->socket = -1;
@@ -59,21 +60,24 @@ namespace irc {
         return irc::IRCRequest(buffer);
     }
 
-    int irc::User::PushOfflineMessage()
+    std::vector<std::string> irc::User::PushOfflineMessage()
     {   
-        int msg_num = 0;
-        while(!mesgQueue.empty()) {
-            try {
-                IRCPushMessage(mesgQueue.front());
-                mesgQueue.pop();
-                msg_num++;
-            }
-            catch(std::exception e) {
-                msg_num = -1;
-                break;
-            }
+        std::vector<std::string> msgs;
+        std::ifstream inf("motd.txt");
+        std::ostringstream tmp;
+        tmp << inf.rdbuf();
+        std::string tmp_str = tmp.str();
+        int pos = 0;
+        int pre_pos = 0;
+        while((pos = tmp_str.find('\n', pre_pos)) != std::string::npos) {
+            msgs.push_back(tmp_str.substr(pre_pos, pos-pre_pos));
+            pre_pos = pos = pos+1;
         }
-        return msg_num;
+        int n = tmp_str.size();
+        if(pre_pos < n - 1) {
+            msgs.push_back(tmp_str.substr(pre_pos, tmp_str.size() - pre_pos));
+        }
+        return msgs;
     }
 
     std::string irc::User::GetSrc()

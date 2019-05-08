@@ -114,6 +114,10 @@ std::string SRead(int sockfd, std::string::size_type limit)
       break;
     }
   }
+  if(ret.size() > 510) {
+    ret = ret.substr(0, 510);
+  }
+  ret += "\r\n";
   return ret;
 }
 
